@@ -20,16 +20,24 @@ block content
                 input(type='radio',name='satellite', value='') 
                 |dowolny
             
+            p Kierunek orbity:
+                input(type='radio',name='orbitdirection', value='ASCENDING') 
+                |Ascending
+                input(type='radio',name='orbitdirection', value='DESCENDING') 
+                |Descending
+                input(type='radio',name='orbitdirection', value='') 
+                |dowolny
+
             p Polaryzacja:
-                input(type='radio',name='polarisation', value='VV') 
+                input(type='radio',name='polarisationmode', value='VV') 
                 |VV
-                input(type='radio',name='polarisation', value='VH') 
+                input(type='radio',name='polarisationmode', value='VH') 
                 |VH
-                input(type='radio',name='polarisation', value='HV') 
+                input(type='radio',name='polarisationmode', value='HV') 
                 |HV
-                input(type='radio',name='polarisation', value='HH') 
+                input(type='radio',name='polarisationmode', value='HH') 
                 |HH
-                input(type='radio',name='polarisation', value='') 
+                input(type='radio',name='polarisationmode', value='') 
                 |dowolna
             p Typ produktu:
                 input(type='radio',name='producttype', value='GRD') 
@@ -41,14 +49,18 @@ block content
                 input(type='radio',name='producttype', value='') 
                 |dowolny
             p Tryb sensora:
-                input(type='radio',name='sensoroperationalmode', value='IW') 
+                input(type='radio',name='mode', value='IW') 
                 |IW
-                input(type='radio',name='sensoroperationalmode', value='SM') 
+                input(type='radio',name='mode', value='SM') 
                 |SM
-                input(type='radio',name='sensoroperationalmode', value='EW') 
+                input(type='radio',name='mode', value='EW') 
                 |EW
-                input(type='radio',name='sensoroperationalmode', value='') 
+                input(type='radio',name='mode', value='') 
                 |dowolny
+
+            p Względny numer orbity
+                p
+                    input(type='text', name='relativeorbitnumber', value='')
             p Zakres przestrzenny: 
                 p
                     input(type='text', name='extent', value='', id='extent_form', style='width: 100%' readonly)

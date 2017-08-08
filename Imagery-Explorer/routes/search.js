@@ -13,6 +13,12 @@ router.get('/', function (req, res) {
     // TODO: get records
 
     var satellite = req.query.satellite;
+    var orbitdirection = req.query.orbitdirection;
+    var producttype = req.query.producttype;
+    var mode = req.query.mode;
+    var polarisationmode = req.query.polarisationmode;
+    var relativeorbitnumber = req.query.relativeorbitnumber;
+
     var query = {};
 
     if (satellite == 'S1') {
@@ -22,6 +28,50 @@ router.get('/', function (req, res) {
     } else {
         //do nothing
     };
+
+    if (orbitdirection == 'ASCENDING') {
+        query['properties.orbitdirection'] = 'ASCENDING'
+    } else if (orbitdirection == 'DESCENDING') {
+        query['properties.orbitdirection'] = 'DESCENDING'
+    } else {
+        //do nothing
+    };
+
+    if (producttype == 'GRD') {
+        query['properties.producttype'] = 'GRD'
+    } else if (producttype == 'SLC') {
+        query['properties.producttype'] = 'SLC'
+    } else if (producttype == 'RAW') {
+        query['properties.producttype'] = 'RAW'
+    } else {
+        //do nothing
+    };
+
+    if (polarisationmode == 'VV') {
+        query['properties.polarisationmode'] = new RegExp('VV')
+    } else if (polarisationmode == 'HV') {
+        query['properties.polarisationmode'] = new RegExp('HV')
+    } else if (polarisationmode == 'VH') {
+        query['properties.polarisationmode'] = new RegExp('VH')
+    } else if (polarisationmode == 'HH') {
+        query['properties.polarisationmode'] = new RegExp('HH')
+    } else {
+        //do nothing
+    };
+
+    if (mode == 'IW') {
+        query['properties.mode'] = 'IW'
+    } else if (mode == 'SM') {
+        query['properties.mode'] = 'SM'
+    } else if (mode == 'EW') {
+        query['properties.mode'] = 'EW'
+    } else {
+        //do nothing
+    };
+ 
+    if (relativeorbitnumber) {
+        query['properties.relativeorbitnumber'] = relativeorbitnumber
+    }
 
     console.log(query);
 
