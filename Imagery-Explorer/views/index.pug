@@ -1,0 +1,114 @@
+﻿extends layout
+
+block content
+    div(id='content')
+        h1 Wyszukiwarka produktów satelity Sentinel-1A
+        h2 Wyszukaj produkt
+        if error
+            p.err !{error}
+        form(method='GET', action='/search')
+            p Od: 
+                input(type='date',name='dataod', placeholder='RRRR-MM-DD')        
+            p Do: 
+                input(type='date',name='datado', placeholder='RRRR-MM-DD')
+            
+            p Satelita:
+                input(type='radio',name='satellite', value='S1') 
+                |Sentinel-1
+                input(type='radio',name='satellite', value='S2') 
+                |Sentinel-2
+                input(type='radio',name='satellite', value='') 
+                |dowolny
+            
+            p Polaryzacja:
+                input(type='radio',name='polarisation', value='VV') 
+                |VV
+                input(type='radio',name='polarisation', value='VH') 
+                |VH
+                input(type='radio',name='polarisation', value='HV') 
+                |HV
+                input(type='radio',name='polarisation', value='HH') 
+                |HH
+                input(type='radio',name='polarisation', value='') 
+                |dowolna
+            p Typ produktu:
+                input(type='radio',name='producttype', value='GRD') 
+                |GRD
+                input(type='radio',name='producttype', value='SLC') 
+                |SLC
+                input(type='radio',name='producttype', value='RAW') 
+                |RAW
+                input(type='radio',name='producttype', value='') 
+                |dowolny
+            p Tryb sensora:
+                input(type='radio',name='sensoroperationalmode', value='IW') 
+                |IW
+                input(type='radio',name='sensoroperationalmode', value='SM') 
+                |SM
+                input(type='radio',name='sensoroperationalmode', value='EW') 
+                |EW
+                input(type='radio',name='sensoroperationalmode', value='') 
+                |dowolny
+            p Zakres przestrzenny: 
+                p
+                    input(type='text', name='extent', value='', id='extent_form', style='width: 100%' readonly)
+
+            div(id='map')
+
+            // TODO: Leaflet map
+
+            //-
+                script.
+                    var map = L.map('map', {
+                        center: [52.07, 19.48],
+                        zoom: 6,
+                        minZoom: 6,
+                        maxBounds: L.latLngBounds([[54.89, 14.05],[48.95, 24.23]])
+                    });
+                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {attribution: '&copy OpenStreetMap contributors'}).addTo(map);
+                
+                    var drawnItems = new L.FeatureGroup();
+                    map.addLayer(drawnItems);
+
+                    var drawControl = new L.Control.Draw({
+                        draw: {
+                        rectangle: {
+                            shapeOptions: {
+                                color: '#6593FD',
+                                opacity: 0.8
+                            }
+                        },
+                        polyline: false, 
+                        polygon: false, 
+                        circle: false, 
+                        marker: false
+                        },
+                            edit: {
+                                featureGroup: drawnItems, 
+                                edit: false
+                                }
+                    });
+                    map.addControl(drawControl);
+
+                    map.on('draw:created', function (e) {
+                        var type = e.layerType,
+                            layer = e.layer;
+                        var latLngsArray = layer.toGeoJSON()
+
+
+                        var extentString = 'POLYGON ((';
+                        var xy = latLngsArray.geometry.coordinates[0];
+
+                        extentString = extentString + xy[0][0] + ' ' +  xy[0][1] + ',' + xy[1][0] + ' ' +  xy[1][1] + ',' + xy[2][0] + ' ' +  xy[2][1] + ',' + xy[3][0] + ' ' +  xy[3][1] + ',' + xy[4][0] + ' ' +  xy[4][1] + '))'
+
+                        document.getElementById("extent_form").value = extentString;
+                        drawnItems.clearLayers();
+                        drawnItems.addLayer(layer);
+                    });
+
+                    map.on('draw:deleted', function (e) {
+                        document.getElementById("extent_form").value = '';
+                    });
+            //
+            p
+                input(type='submit', value='Szukaj')
