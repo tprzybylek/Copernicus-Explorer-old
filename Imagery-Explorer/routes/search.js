@@ -27,6 +27,8 @@ router.get('/', function (req, res) {
     var orbitdirectionS2 = req.query.orbitdirectionS2;
     var relativeorbitnumberS2 = req.query.relativeorbitnumberS2;
 
+    var extent = req.query.extent;
+
     var query = {};
 
     var dataspace = {};
