@@ -19,51 +19,61 @@ block content
                 |Sentinel-2
                 input(type='radio',name='satellite', value='') 
                 |dowolny
-            
-            p Kierunek orbity:
-                input(type='radio',name='orbitdirection', value='ASCENDING') 
-                |Ascending
-                input(type='radio',name='orbitdirection', value='DESCENDING') 
-                |Descending
-                input(type='radio',name='orbitdirection', value='') 
-                |dowolny
+            p Sentinel-1:
+                p Kierunek orbity:
+                    input(type='radio',name='orbitdirectionS1', value='ASCENDING') 
+                    |Ascending
+                    input(type='radio',name='orbitdirectionS1', value='DESCENDING') 
+                    |Descending
+                    input(type='radio',name='orbitdirectionS1', value='') 
+                    |dowolny
 
-            p Polaryzacja:
-                input(type='radio',name='polarisationmode', value='VV') 
-                |VV
-                input(type='radio',name='polarisationmode', value='VH') 
-                |VH
-                input(type='radio',name='polarisationmode', value='HV') 
-                |HV
-                input(type='radio',name='polarisationmode', value='HH') 
-                |HH
-                input(type='radio',name='polarisationmode', value='') 
-                |dowolna
-            p Typ produktu:
-                input(type='radio',name='producttype', value='GRD') 
-                |GRD
-                input(type='radio',name='producttype', value='SLC') 
-                |SLC
-                input(type='radio',name='producttype', value='RAW') 
-                |RAW
-                input(type='radio',name='producttype', value='') 
-                |dowolny
-            p Tryb sensora:
-                input(type='radio',name='mode', value='IW') 
-                |IW
-                input(type='radio',name='mode', value='SM') 
-                |SM
-                input(type='radio',name='mode', value='EW') 
-                |EW
-                input(type='radio',name='mode', value='') 
-                |dowolny
+                p Polaryzacja:
+                    input(type='radio',name='polarisationmodeS1', value='VV') 
+                    |VV
+                    input(type='radio',name='polarisationmodeS1', value='VH') 
+                    |VH
+                    input(type='radio',name='polarisationmodeS1', value='HV') 
+                    |HV
+                    input(type='radio',name='polarisationmodeS1', value='HH') 
+                    |HH
+                    input(type='radio',name='polarisationmodeS1', value='') 
+                    |dowolna
+                p Typ produktu:
+                    input(type='radio',name='producttypeS1', value='GRD') 
+                    |GRD
+                    input(type='radio',name='producttypeS1', value='SLC') 
+                    |SLC
+                    input(type='radio',name='producttypeS1', value='RAW') 
+                    |RAW
+                    input(type='radio',name='producttypeS1', value='') 
+                    |dowolny
+                p Tryb sensora:
+                    input(type='radio',name='modeS1', value='IW') 
+                    |IW
+                    input(type='radio',name='modeS1', value='SM') 
+                    |SM
+                    input(type='radio',name='modeS1', value='EW') 
+                    |EW
+                    input(type='radio',name='modeS1', value='') 
+                    |dowolny
 
-            p Względny numer orbity
-                p
-                    input(type='text', name='relativeorbitnumber', value='')
+                p Względny numer orbity: 
+                    input(type='text', name='relativeorbitnumberS1', value='')
+
+            p Sentinel-2:
+                p Kierunek orbity:
+                    input(type='radio',name='orbitdirectionS2', value='ASCENDING') 
+                    |Ascending
+                    input(type='radio',name='orbitdirectionS2', value='DESCENDING') 
+                    |Descending
+                    input(type='radio',name='orbitdirectionS2', value='') 
+                    |dowolny
+                p Względny numer orbity: 
+                    input(type='text', name='relativeorbitnumberS2', value='')
             p Zakres przestrzenny: 
-                p
-                    input(type='text', name='extent', value='', id='extent_form', style='width: 100%' readonly)
+                    p
+                        input(type='text', name='extent', value='', id='extent_form', style='width: 100%' readonly)
 
             div(id='map')
 

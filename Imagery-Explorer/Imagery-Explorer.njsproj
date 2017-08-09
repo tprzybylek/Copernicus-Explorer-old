@@ -30,12 +30,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="public\javascripts\jquery-3.2.1.min.js" />
+    <Compile Include="public\javascripts\leaflet-map.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\javascripts\leaflet\leaflet-src.js" />
+    <Compile Include="public\javascripts\leaflet\leaflet.js" />
     <Compile Include="routes\search.js" />
     <Compile Include="routes\about.js" />
     <Compile Include="routes\help.js" />
     <Compile Include="routes\index.js" />
     <Compile Include="routes\users.js" />
     <Content Include="package.json" />
+    <Content Include="public\javascripts\leaflet\images\layers-2x.png" />
+    <Content Include="public\javascripts\leaflet\images\layers.png" />
+    <Content Include="public\javascripts\leaflet\images\marker-icon-2x.png" />
+    <Content Include="public\javascripts\leaflet\images\marker-icon.png" />
+    <Content Include="public\javascripts\leaflet\images\marker-shadow.png" />
+    <Content Include="public\javascripts\leaflet\leaflet-src.js.map" />
+    <Content Include="public\javascripts\leaflet\leaflet.css" />
+    <Content Include="public\javascripts\leaflet\leaflet.js.map" />
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
     <Content Include="views\help.pug" />
@@ -50,6 +64,8 @@
     <Folder Include="public\" />
     <Folder Include="public\images\" />
     <Folder Include="public\javascripts\" />
+    <Folder Include="public\javascripts\leaflet\" />
+    <Folder Include="public\javascripts\leaflet\images\" />
     <Folder Include="public\stylesheets\" />
     <Folder Include="routes\" />
     <Folder Include="views\" />
