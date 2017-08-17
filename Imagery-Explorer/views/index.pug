@@ -1,26 +1,36 @@
 ﻿extends layout
 
 block content
-    div(id='content')
-        h1 Wyszukiwarka produktów satelity Sentinel-1A
-        h2 Wyszukaj produkt
-        if error
-            p.err !{error}
-        form(method='GET', action='/search')
-            p Od: 
-                input(type='date',name='dataod', placeholder='RRRR-MM-DD')        
+    h1 Wyszukiwarka produktów programu Sentinel
+    h2 Wyszukaj produkt
+    if error
+        p.err !{error}
+    form(method='GET', action='/search')
+        div(class='formbox')
+            p Od:
+            p
+                input(class='inputbox', type='date',name='dataod', placeholder='RRRR-MM-DD')        
             p Do: 
-                input(type='date',name='datado', placeholder='RRRR-MM-DD')
+            p
+                input(class='inputbox', type='date',name='datado', placeholder='RRRR-MM-DD')
             
             p Satelita:
+            p
                 input(type='radio',name='satellite', value='S1') 
                 |Sentinel-1
                 input(type='radio',name='satellite', value='S2') 
                 |Sentinel-2
                 input(type='radio',name='satellite', value='') 
                 |dowolny
-            p Sentinel-1:
+            p Zakres przestrzenny: 
+            p
+                input(class='inputbox', type='text', name='extent', value='', id='extent_form', readonly)
+        div(id='map', class='formbox')
+        div(class='formbox')
+            h3 Sentinel-1:
+            p
                 p Kierunek orbity:
+                p
                     input(type='radio',name='orbitdirectionS1', value='ASCENDING') 
                     |Ascending
                     input(type='radio',name='orbitdirectionS1', value='DESCENDING') 
@@ -29,6 +39,7 @@ block content
                     |dowolny
 
                 p Polaryzacja:
+                p
                     input(type='radio',name='polarisationmodeS1', value='VV') 
                     |VV
                     input(type='radio',name='polarisationmodeS1', value='VH') 
@@ -40,6 +51,7 @@ block content
                     input(type='radio',name='polarisationmodeS1', value='') 
                     |dowolna
                 p Typ produktu:
+                p
                     input(type='radio',name='producttypeS1', value='GRD') 
                     |GRD
                     input(type='radio',name='producttypeS1', value='SLC') 
@@ -49,6 +61,7 @@ block content
                     input(type='radio',name='producttypeS1', value='') 
                     |dowolny
                 p Tryb sensora:
+                p
                     input(type='radio',name='modeS1', value='IW') 
                     |IW
                     input(type='radio',name='modeS1', value='SM') 
@@ -59,10 +72,12 @@ block content
                     |dowolny
 
                 p Względny numer orbity: 
-                    input(type='text', name='relativeorbitnumberS1', value='')
-
-            p Sentinel-2:
+                    input(class='inputbox', type='text', name='relativeorbitnumberS1', value='')
+        div(class='formbox')
+            h3 Sentinel-2:
+            p
                 p Kierunek orbity:
+                p
                     input(type='radio',name='orbitdirectionS2', value='ASCENDING') 
                     |Ascending
                     input(type='radio',name='orbitdirectionS2', value='DESCENDING') 
@@ -70,16 +85,8 @@ block content
                     input(type='radio',name='orbitdirectionS2', value='') 
                     |dowolny
                 p Względny numer orbity: 
-                    input(type='text', name='relativeorbitnumberS2', value='')
-            p Zakres przestrzenny: 
-                p
-                    input(type='text', name='extent', value='', id='extent_form', style='width: 100%' readonly)
-
-            div(id='map')
-            
-
-            // TODO: Leaflet map
-
+                    input(class='inputbox', type='text', name='relativeorbitnumberS2', value='')
+        div(class='searchbox')
             p
                 input(type='submit', value='Szukaj')
     
@@ -125,6 +132,3 @@ block content
     
     //Leaflet map
     script(type='text/javascript', src='/javascripts/leaflet-map.js')
-    
-
-    

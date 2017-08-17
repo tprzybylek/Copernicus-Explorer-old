@@ -8,10 +8,6 @@ var url = "mongodb://localhost:27017/db";
 
 /* GET home page. */
 router.get('/', function (req, res) {
-
-    // TODO: get request handler
-    // TODO: get records
-
     var datefrom = req.query.dataod;
 
     var dateto = req.query.datado;
@@ -27,7 +23,9 @@ router.get('/', function (req, res) {
     var orbitdirectionS2 = req.query.orbitdirectionS2;
     var relativeorbitnumberS2 = req.query.relativeorbitnumberS2;
 
-    var extent = req.query.extent;
+    if (req.query.extent != '') {
+        var extent = JSON.parse(req.query.extent)['geometry'];
+    };
 
     var query = {};
 
@@ -45,9 +43,13 @@ router.get('/', function (req, res) {
         query['properties.ingestiondate'] = dataspace;
     };
 
+    if (extent) {
+        query['geometry'] = { $geoIntersects: { $geometry: extent } } 
+    }
+
     if (satellite == 'S1') {
         query['properties.satellite'] = new RegExp('S1')
-
+        console.log(query['properties.satellite']);
         if (orbitdirectionS1 == 'ASCENDING') {
             query['properties.orbitdirection'] = 'ASCENDING'
         } else if (orbitdirectionS1 == 'DESCENDING') {
@@ -166,15 +168,15 @@ router.get('/', function (req, res) {
         };
     };
 
-    
+    var script = '';
 
-    console.log(query);
+    console.log(JSON.stringify(query));
 
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
         db.collection("products").find(query).toArray(function (err, array) {
             if (err) throw err;
-            res.render('search', { title: 'search', result: JSON.stringify(array)});
+            res.render('search', { title: 'search', results: array, map:script});
             db.close();
         });
     });

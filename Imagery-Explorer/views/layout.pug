@@ -5,5 +5,24 @@ html
     link(rel='stylesheet', href='/stylesheets/main.css')
     link(rel='stylesheet', href='/javascripts/leaflet/leaflet.css')
     link(rel='stylesheet', href='/javascripts/leaflet.draw/leaflet.draw.css')
+
   body
-    block content
+
+        div(id='header')
+            div(id='header-inside')
+                div
+                    a(href='/about')
+                        span O stronie
+                div
+                    a(href='/help')
+                        span Pomoc
+                div
+                    a(href='/')
+                        span Strona główna
+                div(id='logo')
+                
+        div(id='banner')
+
+        div(id='content')
+            block content
+

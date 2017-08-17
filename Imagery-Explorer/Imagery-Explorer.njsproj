@@ -31,6 +31,7 @@
   <ItemGroup>
     <Compile Include="app.js" />
     <Compile Include="public\javascripts\jquery-3.2.1.min.js" />
+    <Compile Include="public\javascripts\leaflet-map-search.js" />
     <Compile Include="public\javascripts\leaflet-map.js">
       <SubType>Code</SubType>
     </Compile>

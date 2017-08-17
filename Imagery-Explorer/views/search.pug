@@ -3,4 +3,27 @@
 block content
   h1= title
   p Welcome to #{title}
-  p= result
+      if results.length
+        div(id='map')
+        script(type='text/javascript', src='/javascripts/leaflet/leaflet.js')
+        script(type='text/javascript', src='/javascripts/leaflet-map-search.js')
+        table(border='1')
+            tr
+                th= 'id'
+                th= 'ingestiondate'
+                th= 'instrument'
+                th= 'mode'
+                th= 'orbitdirection'
+                th= 'relativeorbitnumber'
+                th= 'satellite'
+                th= 'size'
+            each result in results
+                tr(id= result.id)
+                    td= result.properties.id
+                    td= result.properties.ingestiondate
+                    td= result.properties.instrument
+                    td= result.properties.mode
+                    td= result.properties.orbitdirection
+                    td= result.properties.relativeorbitnumber
+                    td= result.properties.satellite
+                    td= result.properties.size
