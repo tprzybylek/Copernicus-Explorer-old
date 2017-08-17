@@ -1,187 +1,181 @@
 ﻿'use strict';
 var express = require('express');
+var mysql = require('mysql');
+var parse = require('wellknown')
+
+var pool = mysql.createPool({
+    connectionLimit: 2,
+    host: 'localhost',
+    user: 'root',
+    database: 'products'
+});
+
+pool.getConnection(function (err, connection) {
+    if (err) throw err;
+    console.log('Connection ID: ' + connection.threadId);
+});
+
 var router = express.Router();
 
 var http = require('http');
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/db";
 
 /* GET home page. */
 router.get('/', function (req, res) {
-    var datefrom = req.query.dataod;
-
-    var dateto = req.query.datado;
-
-    var satellite = req.query.satellite;
-
-    var orbitdirectionS1 = req.query.orbitdirectionS1;
-    var producttypeS1 = req.query.producttypeS1;
-    var modeS1 = req.query.modeS1;
-    var polarisationmodeS1 = req.query.polarisationmodeS1;
-    var relativeorbitnumberS1 = req.query.relativeorbitnumberS1;
-
     var orbitdirectionS2 = req.query.orbitdirectionS2;
     var relativeorbitnumberS2 = req.query.relativeorbitnumberS2;
 
-    if (req.query.extent != '') {
-        var extent = JSON.parse(req.query.extent)['geometry'];
-    };
+    var isNotEmpty = true
 
-    var query = {};
-
-    var dataspace = {};
-
-    if (datefrom != '') {
-        datefrom = 'ISODate(' + datefrom + 'T00:00:00.000Z)';
-        dataspace['$gte'] = datefrom
-        query['properties.ingestiondate'] = dataspace;
-    };
-
-    if (dateto != '') {
-        dateto = 'ISODate(' + dateto + 'T23:59:59.999Z)';
-        dataspace['$lt'] = dateto
-        query['properties.ingestiondate'] = dataspace;
-    };
-
-    if (extent) {
-        query['geometry'] = { $geoIntersects: { $geometry: extent } } 
+    if (!req.query.dataod && !req.query.datado && !req.query.extent && (Object.keys(req.query).length == 4)) {
+        isNotEmpty = false
     }
+    //HERE
+    if (req.query.satellite == 'S1') {
+        var myQuery = 'SELECT ID, Ingestiondate, Satellite, Mode, Orbitdirection, Polarisationmode, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s1 WHERE';
+        var myQueryVariables = [];
+        var count = false;
 
-    if (satellite == 'S1') {
-        query['properties.satellite'] = new RegExp('S1')
-        console.log(query['properties.satellite']);
-        if (orbitdirectionS1 == 'ASCENDING') {
-            query['properties.orbitdirection'] = 'ASCENDING'
-        } else if (orbitdirectionS1 == 'DESCENDING') {
-            query['properties.orbitdirection'] = 'DESCENDING'
-        } else {
-            //do nothing
+        if (req.query.dataod || req.query.datado) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Ingestiondate BETWEEN ? AND ?)';
+            myQueryVariables.push(req.query.dataod);
+            myQueryVariables.push(req.query.datado);
+            count = true;
+        };
+        if (req.query.polarisationmodeS1) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Polarisationmode LIKE ?)';
+            req.query.polarisation = '%' + req.query.polarisationmodeS1 + '%'
+            myQueryVariables.push(req.query.polarisationmodeS1)
+            count = true;
+        };
+        if (req.query.producttypeS1) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Producttype = ?)';
+            myQueryVariables.push(req.query.producttypeS1)
+            count = true;
+        };
+        if (req.query.modeS1) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Mode = ?)';
+            myQueryVariables.push(req.query.modeS1)
+            count = true;
+        };
+        if (req.query.extent) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Overlaps(Coordinates, ST_GeomFromText(?)) OR Within(ST_GeomFromText(?), Coordinates) OR Within(Coordinates, ST_GeomFromText(?)))';
+            myQueryVariables.push(req.query.extent)
+            myQueryVariables.push(req.query.extent)
+            myQueryVariables.push(req.query.extent)
+            count = true;
+        };
+        if (req.query.orbitdirectionS1) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Orbitdirection = ?)';
+            myQueryVariables.push(req.query.orbitdirectionS1)
+            count = true;
         };
 
-        if (producttypeS1 == 'GRD') {
-            query['properties.producttype'] = 'GRD'
-        } else if (producttypeS1 == 'SLC') {
-            query['properties.producttype'] = 'SLC'
-        } else if (producttypeS1 == 'RAW') {
-            query['properties.producttype'] = 'RAW'
-        } else {
-            //do nothing
+        if (req.query.relativeorbitnumberS1) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Relativeorbitnumber = ?)';
+            myQueryVariables.push(req.query.relativeorbitnumberS1)
+            count = true;
         };
+        myQuery = myQuery + ' ORDER BY Ingestiondate DESC'
+        /////////////////////////////////////////////////////////////////////// S2
+    } else if (req.query.satellite == 'S2') {
+        var myQueryS2 = 'SELECT ID, Ingestiondate, Satellite, Mode, Orbitdirection, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s1 WHERE';
+        var myQueryVariablesS2 = [];
+        var count = false;
 
-        if (polarisationmodeS1 == 'VV') {
-            query['properties.polarisationmode'] = new RegExp('VV')
-        } else if (polarisationmodeS1 == 'HV') {
-            query['properties.polarisationmode'] = new RegExp('HV')
-        } else if (polarisationmodeS1 == 'VH') {
-            query['properties.polarisationmode'] = new RegExp('VH')
-        } else if (polarisationmodeS1 == 'HH') {
-            query['properties.polarisationmode'] = new RegExp('HH')
-        } else {
-            //do nothing
+        if (req.query.dataod || req.query.datado) {
+            if (count) {
+                myQueryS2 = myQueryS2 + ' AND';
+                count = false
+            };
+            myQueryS2 = myQueryS2 + ' (Ingestiondate BETWEEN ? AND ?)';
+            myQueryVariablesS2.push(req.query.dataod);
+            myQueryVariablesS2.push(req.query.datado);
+            count = true;
         };
-
-        if (modeS1 == 'IW') {
-            query['properties.mode'] = 'IW'
-        } else if (modeS1 == 'SM') {
-            query['properties.mode'] = 'SM'
-        } else if (modeS1 == 'EW') {
-            query['properties.mode'] = 'EW'
-        } else {
-            //do nothing
+        if (req.query.orbitdirectionS2) {
+            if (count) {
+                myQueryS2 = myQueryS2 + ' AND';
+                count = false
+            };
+            myQueryS2 = myQueryS2 + ' (Orbitdirection = ?)';
+            myQueryVariablesS2.push(req.query.orbitdirectionS2)
+            count = true;
         };
-
-        if (relativeorbitnumberS1) {
-            query['properties.relativeorbitnumber'] = relativeorbitnumberS1
+        if (req.query.relativeorbitnumberS2) {
+            if (count) {
+                myQueryS2 = myQueryS2 + ' AND';
+                count = false
+            };
+            myQueryS2 = myQueryS2 + ' (Orbitdirection = ?)';
+            myQueryVariablesS2.push(req.query.relativeorbitnumberS2)
+            count = true;
         };
-
-    } else if (satellite == 'S2') {
-        query['properties.satellite'] = new RegExp('S2')
-
-        if (orbitdirectionS2 == 'ASCENDING') {
-            query['properties.orbitdirection'] = 'ASCENDING'
-        } else if (orbitdirectionS2 == 'DESCENDING') {
-            query['properties.orbitdirection'] = 'DESCENDING'
-        } else {
-            //do nothing
+        if (req.query.extent) {
+            if (count) {
+                myQuery = myQuery + ' AND';
+                count = false
+            };
+            myQuery = myQuery + ' (Overlaps(Coordinates, ST_GeomFromText(?)) OR Within(ST_GeomFromText(?), Coordinates) OR Within(Coordinates, ST_GeomFromText(?)))';
+            myQueryVariables.push(req.query.extent)
+            myQueryVariables.push(req.query.extent)
+            myQueryVariables.push(req.query.extent)
+            count = true;
         };
-
-        if (relativeorbitnumberS2) {
-            query['properties.relativeorbitnumber'] = relativeorbitnumberS2
-        };
-
-    } else {
-        query['$or'] = [{ 'properties.satellite': new RegExp('S1') }, { 'properties.satellite': new RegExp('S2') }]
-        if (orbitdirectionS1 == 'ASCENDING') {
-            query['$or'][0]['properties.orbitdirection'] = 'ASCENDING'
-        } else if (orbitdirectionS1 == 'DESCENDING') {
-            query['$or'][0]['properties.orbitdirection'] = 'DESCENDING'
-        } else {
-            //do nothing
-        };
-
-        if (producttypeS1 == 'GRD') {
-            query['$or'][0]['properties.producttype'] = 'GRD'
-        } else if (producttypeS1 == 'SLC') {
-            query['$or'][0]['properties.producttype'] = 'SLC'
-        } else if (producttypeS1 == 'RAW') {
-            query['$or'][0]['properties.producttype'] = 'RAW'
-        } else {
-            //do nothing
-        };
-
-        if (polarisationmodeS1 == 'VV') {
-            query['$or'][0]['properties.polarisationmode'] = new RegExp('VV')
-        } else if (polarisationmodeS1 == 'HV') {
-            query['$or'][0]['properties.polarisationmode'] = new RegExp('HV')
-        } else if (polarisationmodeS1 == 'VH') {
-            query['$or'][0]['properties.polarisationmode'] = new RegExp('VH')
-        } else if (polarisationmodeS1 == 'HH') {
-            query['$or'][0]['properties.polarisationmode'] = new RegExp('HH')
-        } else {
-            //do nothing
-        };
-
-        if (modeS1 == 'IW') {
-            query['$or'][0]['properties.mode'] = 'IW'
-        } else if (modeS1 == 'SM') {
-            query['$or'][0]['properties.mode'] = 'SM'
-        } else if (modeS1 == 'EW') {
-            query['$or'][0]['properties.mode'] = 'EW'
-        } else {
-            //do nothing
-        };
-
-        if (relativeorbitnumberS1 != '') {
-            query['$or'][0]['properties.relativeorbitnumber'] = relativeorbitnumberS1
-        };
-
-        if (orbitdirectionS2 == 'ASCENDING') {
-            query['$or'][1]['properties.orbitdirection'] = 'ASCENDING'
-        } else if (orbitdirectionS2 == 'DESCENDING') {
-            query['$or'][1]['properties.orbitdirection'] = 'DESCENDING'
-        } else {
-            //do nothing
-        };
-
-        if (relativeorbitnumberS2 != '') {
-            query['$or'][1]['properties.relativeorbitnumber'] = relativeorbitnumberS2
-        };
+        myQuery2 = myQuery2 + ' ORDER BY Ingestiondate DESC'
     };
 
-    var script = '';
-
-    console.log(JSON.stringify(query));
-
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        db.collection("products").find(query).toArray(function (err, array) {
+    if (isNotEmpty) {
+        pool.getConnection(function (err, connection) {
             if (err) throw err;
-            res.render('search', { title: 'search', results: array, map:script});
-            db.close();
-        });
-    });
+            connection.query(myQuery, myQueryVariables, function (err, results, fields) {
+                console.log('Query: ' + myQuery);
 
-    
+                var OSMCopyright = "{attribution: '&copy; OpenStreetMap contributors'}"//"{attribution: '&copy; <a href=" + '"http://openstreetmap.org\"' + ">OpenStreetMap</a> contributors'}"
+                var mapScript = "var map = L.map('map').setView([52.07, 19.48], 6);\n L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', " + OSMCopyright + ").addTo(map); map.doubleClickZoom.disable();"
+                if (results.length) {
+                    for (var result in results) {
+                        var polygonGeoJSON = parse(results[result].bbox)
+                        var polygonParsed = '[' + '[' + polygonGeoJSON.coordinates[0][0][1] + ',' + polygonGeoJSON.coordinates[0][0][0] + '], ' + '[' + polygonGeoJSON.coordinates[0][1][1] + ',' + polygonGeoJSON.coordinates[0][1][0] + '], ' + '[' + polygonGeoJSON.coordinates[0][2][1] + ',' + polygonGeoJSON.coordinates[0][2][0] + '], ' + '[' + polygonGeoJSON.coordinates[0][3][1] + ',' + polygonGeoJSON.coordinates[0][3][0] + ']' + ']'
+                        var polygonScriptS1 = "\n var polygon = L.polygon(" + polygonParsed + ", {color : '#000101', opacity : 0.8, className : '" + results[result].ID + "'}).addTo(map)" + '.bindPopup("<p>' + 'typ produktu: ' + results[result].Producttype + '<br>tryb sensora: ' + results[result].Mode + '<br>polaryzacja: ' + results[result].Polarisationmode + '<br>data i czas pozyskania: ' + results[result].Ingestiondate + '<br>satelita: ' + results[result].Satellite + '<br>pobierz ' + results[result].ID + '</p>")'
+                        mapScript = mapScript + polygonScriptS1
+                    }
+                }
+                res.render('search', { items: results, mapScript: mapScript, title: 'Wyniki wyszukiwania' });
+                connection.release();
+                console.log('Connection relased');
+            });
+        });
+    } else {
+        res.render('index', { error: 'Wprowadź kryteria wyszukiwania', title: 'Wyszukiwarka' });
+    };
 });
 
 module.exports = router;

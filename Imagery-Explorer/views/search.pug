@@ -1,29 +1,40 @@
 ﻿extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-      if results.length
+    script(type='text/javascript', src='/javascripts/leaflet/leaflet.js')
+    script(src="/javascripts/jquery-3.2.1.min.js")
+    //script(src="/javascripts/jquery-compat-3.0.0-alpha1.js")
+
+    h1= title
+    if items.length
         div(id='map')
-        script(type='text/javascript', src='/javascripts/leaflet/leaflet.js')
-        script(type='text/javascript', src='/javascripts/leaflet-map-search.js')
-        table(border='1')
+            script.
+                !{mapScript}
+        script.
+                $(document).ready(function(){
+                    $("tr, path").click(function(){
+                        var selectedClass = "." + $(this).attr('class').split(' ')[0];
+                        $(selectedClass).toggleClass("selected");
+                    });
+                });
+        table
             tr
                 th= 'id'
                 th= 'ingestiondate'
-                th= 'instrument'
                 th= 'mode'
                 th= 'orbitdirection'
                 th= 'relativeorbitnumber'
                 th= 'satellite'
                 th= 'size'
-            each result in results
-                tr(id= result.id)
-                    td= result.properties.id
-                    td= result.properties.ingestiondate
-                    td= result.properties.instrument
-                    td= result.properties.mode
-                    td= result.properties.orbitdirection
-                    td= result.properties.relativeorbitnumber
-                    td= result.properties.satellite
-                    td= result.properties.size
+            each item in items
+                tr(class= item.ID)
+                    td= item.ID
+                    td= item.Ingestiondate
+                    td= item.Mode
+                    td= item.Orbitdirection
+                    td= item.Relativeorbitnumber
+                    td= item.Satellite
+                    td= item.Size
+                    td 
+                        a(href="https://scihub.esa.int/dhus/odata/v1/Products('#{item.ID}')/$value") pobierz
+

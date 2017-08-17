@@ -87,4 +87,14 @@ a {
     width: 160px;
 }
 
+.selected {
+    background-color: #6593fd;
+    stroke: #6593fd;
+    fill: #6593fd;
+}
+
+    .selected a:link {
+        color: #fff;
+    }
+
 
