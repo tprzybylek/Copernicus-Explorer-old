@@ -152,6 +152,46 @@ router.get('/', function (req, res) {
         myQuery2 = myQuery2 + ' ORDER BY Ingestiondate DESC'
     };
 
+
+    //////////
+
+    var Render = function (resultsS1, resultsS2, mapScript) {
+        console.log('got data 160: ' + resultsS1);
+        console.log('got data 161: ' + resultsS2);
+        console.log('got data 162: ' + mapScript);
+
+        //res.render('search', { items: results, mapScript: mapScript, title: 'Wyniki wyszukiwania' });
+
+    };
+
+    var Query = function (callback) {
+
+        var BuildQuery = function (callback) {
+            var myQueryS1 = 'myQueryS1';
+            var myQueryS2 = 'myQueryS2';
+
+            callback(myQueryS1, myQueryS2)
+        }
+
+        var QueryDB = function (myQueryS1, myQueryS2) {
+            console.log('got data 175: ' + myQueryS1);
+            console.log('got data 176: ' + myQueryS2);
+
+            var resultsS1 = 'resultsS1';
+            var resultsS2 = 'resultsS2';
+            var mapScript = 'mapScript';
+
+            callback(resultsS1, resultsS2, mapScript)
+        }
+
+        BuildQuery(QueryDB);
+    };
+
+    Query(Render);
+
+
+    //////////
+
     if (isNotEmpty) {
         pool.getConnection(function (err, connection) {
             if (err) throw err;
