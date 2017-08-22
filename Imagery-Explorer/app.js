@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var search = require('./routes/search');
 var help = require('./routes/help');
 var about = require('./routes/about');
+var crop = require('./routes/crop');
 var users = require('./routes/users');
 
 var app = express();
@@ -32,6 +33,7 @@ app.use('/users', users);
 app.use('/search', search);
 app.use('/help', help);
 app.use('/about', about);
+app.use('/crop', crop);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

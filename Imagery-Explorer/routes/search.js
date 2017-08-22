@@ -58,7 +58,7 @@ router.get('/', function (req, res) {
     };
 
     if (isNotEmpty) {
-        var Render = function (resultsS1, polygonScriptS1, resultsS2, polygonScriptS2) {
+        var Render = function (resultsS1, polygonScriptS1, resultsS2, polygonScriptS2, extent) {
             var OSMCopyright = "{attribution: '&copy; OpenStreetMap contributors'}"//"{attribution: '&copy; <a href=" + '"http://openstreetmap.org\"' + ">OpenStreetMap</a> contributors'}"
             var mapHeader = "var map = L.map('map').setView([52.07, 19.48], 6);\n L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', " + OSMCopyright + ").addTo(map); map.doubleClickZoom.disable();"
             var mapScript = '';
@@ -70,9 +70,9 @@ router.get('/', function (req, res) {
                 mapScript = mapHeader + polygonScriptS2;
             };
 
-            //console.log(req.query.extent);
+            
 
-            res.render('search', { items: resultsS1, mapScript: mapScript, title: 'Wyniki wyszukiwania' });
+            res.render('search', { items: resultsS1, mapScript: mapScript, title: 'Wyniki wyszukiwania', extent: JSON.stringify(extent) });
         };
         var Query = function (callback) {
             var BuildQuery = function (callback) {
