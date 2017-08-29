@@ -87,4 +87,20 @@ a {
     width: 160px;
 }
 
+.selected {
+    background-color: #6593fd;
+    stroke: #6593fd;
+    fill: #6593fd;
+}
 
+    .selected a:link {
+        color: #fff;
+    }
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}

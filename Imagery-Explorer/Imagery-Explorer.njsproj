@@ -67,6 +67,9 @@
     <Compile Include="public\javascripts\leaflet.draw\Tooltip.js" />
     <Compile Include="public\javascripts\leaflet\leaflet-src.js" />
     <Compile Include="public\javascripts\leaflet\leaflet.js" />
+    <Compile Include="routes\crop.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="routes\search.js" />
     <Compile Include="routes\about.js" />
     <Compile Include="routes\help.js" />
@@ -87,6 +90,7 @@
     <Content Include="public\javascripts\leaflet\leaflet.js.map" />
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
+    <Content Include="views\crop.pug" />
     <Content Include="views\help.pug" />
     <Content Include="views\about.pug" />
     <Content Include="views\search.pug" />

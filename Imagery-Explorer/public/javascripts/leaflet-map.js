@@ -1,10 +1,24 @@
-﻿/*
-var map = L.map('map', {
-    center: [52.07, 19.48],
-    zoom: 6,
-    minZoom: 6
-});
-*/
+﻿function toWKT(layer) {
+    var lng, lat, coords = [];
+    if (layer instanceof L.Polygon || layer instanceof L.Polyline) {
+        var latlngs = layer.getLatLngs();
+        for (var i = 0; i < latlngs.length; i++) {
+            latlngs[i]
+            coords.push(latlngs[i].lng + " " + latlngs[i].lat);
+            if (i === 0) {
+                lng = latlngs[i].lng;
+                lat = latlngs[i].lat;
+            }
+        };
+        if (layer instanceof L.Polygon) {
+            return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+        } else if (layer instanceof L.Polyline) {
+            return "LINESTRING(" + coords.join(",") + ")";
+        }
+    } else if (layer instanceof L.Marker) {
+        return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
+    }
+}
 
 var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -50,7 +64,7 @@ map.on("draw:created", function (e) {
     drawControlFull.removeFrom(map);
     drawControlEditOnly.addTo(map)
     drawnItems.addLayer(layer);
-    document.getElementById('extent_form').value = JSON.stringify(layer.toGeoJSON());
+    document.getElementById('extent_form').value = toWKT(layer);
 });
 
 map.on("draw:deleted", function (e) {
