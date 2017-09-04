@@ -71,7 +71,7 @@ router.get('/', function (req, res) {
             };
 
             
-
+            var extent = req.query.extent
             res.render('search', { items: resultsS1, mapScript: mapScript, title: 'Wyniki wyszukiwania', extent: JSON.stringify(extent) });
         };
         var Query = function (callback) {
