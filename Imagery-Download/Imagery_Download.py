@@ -5,7 +5,7 @@ from datetime import timedelta
 import mysql.connector
 import time #UNUSED
 
-for mal in range(50):
+for mal in range(100):
     #########################################
 
     def getXML (url, username, password):
@@ -66,6 +66,8 @@ for mal in range(50):
                     product['satellite'] = satellite
                 elif (attribute.tag == namespace + 'id'):
                     product['id'] = attribute.text
+                elif (attribute.tag == namespace + 'title'):
+                    product['title'] = attribute.text
                 elif (attribute.attrib and ('name' in attribute.attrib)):
                     if attribute.attrib['name'] == 'instrumentshortname':
                         product['instrument'] = attribute.text
@@ -103,8 +105,9 @@ for mal in range(50):
 
     def BuildQuery(satellite):
         if (satellite[:2] == 'S1'):
-            SQLquery = "INSERT INTO `s1`(`ID`, `Ingestiondate`, `Satellite`, `Mode`, `Orbitdirection`, `Polarisationmode`, `Producttype`, `Relativeorbitnumber`, `Size`, `Coordinates`) VALUES ("
+            SQLquery = "INSERT INTO `s1`(`ID`, `Title`, `Ingestiondate`, `Satellite`, `Mode`, `Orbitdirection`, `Polarisationmode`, `Producttype`, `Relativeorbitnumber`, `Size`, `Coordinates`) VALUES ("
             SQLquery += "'" + feature['properties']['id'] + "', "
+            SQLquery += "'" + feature['properties']['title'] + "', "
             SQLquery += "'" + feature['properties']['ingestiondate'] + "', "
             SQLquery += "'" + feature['properties']['satellite'] + "', "
             SQLquery += "'" + feature['properties']['mode'] + "', "

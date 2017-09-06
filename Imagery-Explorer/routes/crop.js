@@ -3,25 +3,30 @@ var express = require('express');
 var router = express.Router();
 //http?
 
-var gdal = require("gdal");
+var myPythonScript = "Imagery_Clip.py";
+
+var pythonExecutable = "C:\\Python27\\python.exe";
 
 router.get('/', function (req, res) {
     var extent = req.query.extent;
     var ID = req.query.ID;
-    var filepath = "C:\\Users\\20274\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\Imagery-Explorer\\Imagery-Explorer\\public\\imagery\\s1\\" + ID + "\\measurement\\" + ID + "_vh.tiff"
+    var title = req.query.Title;
 
-    console.log(filepath);
+    var PythonShell = require('python-shell');
 
-    var image = gdal.open(filepath);
+    var options = {
+        mode: 'text',
+        pythonPath: 'C:\\Python27\\python.exe',
+        pythonOptions: ['-u'],
+        scriptPath: 'C:\\Users\\20274\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\Imagery-Explorer\\Imagery-Explorer\\public\\scripts\\Imagery-Clip\\',
+        args: [req.query.ID, req.query.title]
+    };
 
-    console.log("number of bands: " + image.bands.count());
-    console.log("width: " + image.rasterSize.x);
-    console.log("height: " + image.rasterSize.y);
-    console.log("geotransform: " + image.geoTransform);
-    console.log("srs: " + (image.srs ? image.srs.toWKT() : 'null'));
-
-    image.close();
-
+    PythonShell.run(myPythonScript, options, function (err) {
+        if (err) throw err;
+        console.log('finished');
+    });
+    
     res.render('crop', {title: 'crop'});
 });
 

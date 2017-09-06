@@ -3,9 +3,9 @@ import requests
 from osgeo import gdal
 import zipfile, shutil
 
-def cutByBBox (minX, maxX, minY, maxY, path, i, extractpath, id):
+def cutByBBox (minX, maxX, minY, maxY, path, i, extractpath, title):
     WKT_Projection = 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
-    raster_output = extractpath + '\\' + id + '\\' + 'raster_output_' + str(i) + '.tiff'
+    raster_output = extractpath + '\\' + title + '_clip\\' + 'raster_output_' + str(i) + '.tiff'
 
     dataset = gdal.Open(path)
     cols = dataset.RasterXSize
@@ -97,35 +97,88 @@ def cutByBBox (minX, maxX, minY, maxY, path, i, extractpath, id):
     dst_ds = None
     dataset_middle = None
 
-def getProduct (id):
+def zipFolder(folderPath, outputPath):
+    parentFolder = os.path.dirname(folderPath)
+
+    contents = os.walk(folderPath)
+
+    try:
+
+        zipFile = zipfile.ZipFile(outputPath, 'w', zipfile.ZIP_DEFLATED)
+        for root, folders, files in contents:
+            for folderName in folders:
+                absolutePath = os.path.join(root, folderName)
+                relativePath = absolutePath.replace(parentFolder + '\\', '')
+                print 'Adding %s to archive.' % absolutePath
+                zipFile.write(absolutePath,relativePath)
+
+            for fileName in files:
+                absolutePath = os.path.join(root, fileName)
+                relativePath = absolutePath.replace(parentFolder + '\\', '')
+                print 'Adding %s to archive.' % outputPath
+                zipFile.write(absolutePath, relativePath)
+
+        print "'%s' created succesfully." %outputPath
+    except IOError, message:
+        print message
+        sys.exit(1)
+    except IOError, message:
+        print message
+        sys.exit(1)
+    except IOError, message:
+        print message
+        sys.exit(1)
+    finally:
+        zipFile.close()
+
+
+def getProduct (id, title):
     url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('" + id + "')/$value"
 
-    filepath = 'D:\\test\\' + id + '.zip'
+    filepath = 'D:\\test\\' + title + '.zip'
     extractpath = 'D:\\test\\'
 
-    username = 'tprzybylek'
-    password = 'pracainz2015'
+    #if os.path.isdir(extractpath + id)
+
+    #username = 'tprzybylek'
+    #password = 'pracainz2015'
   
-    r = requests.get(url, stream=True)
-    if r.status_code == 200:
-        with open(filepath, 'wb') as f:
-            r.raw.decode_content = True
-            shutil.copyfileobj(r.raw, f)
+    #r = requests.get(url, auth=(username, password), stream=True)
+    #if r.status_code == 200:
+    #    with open(filepath, 'wb') as f:
+    #        r.raw.decode_content = True
+    #        shutil.copyfileobj(r.raw, f)
 
-    zip_ref = zipfile.ZipFile(filepath, 'r')
-    filename = zip_ref.filelist[0].filename
-    zip_ref.extractall(extractpath)
-    zip_ref.close()
+    #zip_ref = zipfile.ZipFile(filepath, 'r')
+    #filename = zip_ref.filelist[0].filename
+    #zip_ref.extractall(extractpath)
+    #zip_ref.close()
 
-    i = 0
-    for image in os.listdir(extractpath + filename[:-1] + '\\measurement\\'):
-        if image.endswith('.tiff'):
-            imagepath = extractpath + filename[:-1] + '\\measurement\\' + image
-            print imagepath
+    #i = 0
 
-            cutByBBox(18.30, 18.80, 54.30, 54.80, imagepath, i, extractpath, id)
-            i = i+1
-            pass
+    #if not os.path.exists('D:\\test\\' + title + '_clip'):
+    #    os.makedirs('D:\\test\\' + title + '_clip')
 
+    #for image in os.listdir(extractpath + filename[:-1] + '\\measurement\\'):
+    #    if image.endswith('.tiff'):
+    #        imagepath = extractpath + filename[:-1] + '\\measurement\\' + image
+    #        print imagepath
 
-getProduct('d31b76a6-7894-42ed-9bf1-871f73fba2eb')
+    #        cutByBBox(18.30, 18.80, 54.30, 54.80, imagepath, i, extractpath, title)
+    #        i = i+1
+    zipFolder(extractpath + title + '_clip', extractpath + title + '_clip.zip')
+
+    f = open(extractpath + title + '_clip.zip', 'r')
+
+    return f
+    sys.stdout.flush()
+    
+
+#def main():
+#    getProduct(sys.argv[0], sys.argv[1])
+
+def main(id, title):
+    getProduct(id, title)
+
+if __name__ == "__main__":
+    main('d31b76a6-7894-42ed-9bf1-871f73fba2eb', 'S1B_IW_GRDH_1SDV_20170101T045911_20170101T045940_003650_006425_45AB')

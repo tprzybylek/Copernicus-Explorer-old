@@ -78,7 +78,7 @@ router.get('/', function (req, res) {
             var BuildQuery = function (callback) {
                 if (req.query.satellite == 'S1') {
                     /////////////////////////////////////////////////////////////////////// S1
-                    var myQueryS1 = 'SELECT ID, Ingestiondate, Satellite, Mode, Orbitdirection, Polarisationmode, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s1 WHERE';
+                    var myQueryS1 = 'SELECT ID, Title, Ingestiondate, Satellite, Mode, Orbitdirection, Polarisationmode, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s1 WHERE';
                     var myQueryVariablesS1 = [];
                     var count = false;
 
@@ -154,7 +154,7 @@ router.get('/', function (req, res) {
                     myQueryS1 = myQueryS1 + ' ORDER BY Ingestiondate DESC'
                 } else if (req.query.satellite == 'S2') {
                     /////////////////////////////////////////////////////////////////////// S2
-                    var myQueryS2 = 'SELECT ID, Ingestiondate, Satellite, Mode, Orbitdirection, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s2 WHERE';
+                    var myQueryS2 = 'SELECT ID, Title, Ingestiondate, Satellite, Mode, Orbitdirection, Producttype, Relativeorbitnumber, Size, AsText(coordinates) AS bbox FROM s2 WHERE';
                     var myQueryVariablesS2 = [];
                     var count = false;
 

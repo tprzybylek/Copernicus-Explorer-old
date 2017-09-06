@@ -20,6 +20,7 @@ block content
         table
             tr
                 th= 'id'
+                th= 'title'
                 th= 'ingestiondate'
                 th= 'mode'
                 th= 'orbitdirection'
@@ -32,6 +33,7 @@ block content
             each item in items
                 tr(class= item.ID)
                     td= item.ID
+                    td= item.Title
                     td= item.Ingestiondate
                     td= item.Mode
                     td= item.Orbitdirection
@@ -42,4 +44,4 @@ block content
                     td 
                         a(href="https://scihub.copernicus.eu/dhus/odata/v1/Products('" + item.ID + "')/$value") pobierz
                     td 
-                        a(href="../crop?extent=" + extent + "&ID=" + item.ID) przytnij
+                        a(href="../crop?extent=" + extent + "&ID=" + item.ID + "&title=" + item.Title) przytnij
