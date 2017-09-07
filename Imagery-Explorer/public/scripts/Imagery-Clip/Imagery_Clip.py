@@ -131,6 +131,9 @@ def zipFolder(folderPath, outputPath):
     finally:
         zipFile.close()
 
+def parseBBox():
+
+    pass
 
 def getProduct (id, title):
     url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('" + id + "')/$value"
@@ -149,36 +152,32 @@ def getProduct (id, title):
     #        r.raw.decode_content = True
     #        shutil.copyfileobj(r.raw, f)
 
-    #zip_ref = zipfile.ZipFile(filepath, 'r')
-    #filename = zip_ref.filelist[0].filename
-    #zip_ref.extractall(extractpath)
-    #zip_ref.close()
+    zip_ref = zipfile.ZipFile(filepath, 'r')
+    filename = zip_ref.filelist[0].filename
+    zip_ref.extractall(extractpath)
+    zip_ref.close()
 
-    #i = 0
+    i = 0
 
-    #if not os.path.exists('D:\\test\\' + title + '_clip'):
-    #    os.makedirs('D:\\test\\' + title + '_clip')
+    if not os.path.exists('D:\\test\\' + title + '_clip'):
+        os.makedirs('D:\\test\\' + title + '_clip')
 
-    #for image in os.listdir(extractpath + filename[:-1] + '\\measurement\\'):
-    #    if image.endswith('.tiff'):
-    #        imagepath = extractpath + filename[:-1] + '\\measurement\\' + image
-    #        print imagepath
+    for image in os.listdir(extractpath + filename[:-1] + '\\measurement\\'):
+        if image.endswith('.tiff'):
+            imagepath = extractpath + filename[:-1] + '\\measurement\\' + image
+            print imagepath
 
-    #        cutByBBox(18.30, 18.80, 54.30, 54.80, imagepath, i, extractpath, title)
-    #        i = i+1
+            cutByBBox(18.30, 18.80, 54.30, 54.80, imagepath, i, extractpath, title)
+            i = i+1
     zipFolder(extractpath + title + '_clip', extractpath + title + '_clip.zip')
 
     f = open(extractpath + title + '_clip.zip', 'r')
 
     return f
     sys.stdout.flush()
-    
-
-#def main():
-#    getProduct(sys.argv[0], sys.argv[1])
 
 def main(id, title):
     getProduct(id, title)
 
 if __name__ == "__main__":
-    main('d31b76a6-7894-42ed-9bf1-871f73fba2eb', 'S1B_IW_GRDH_1SDV_20170101T045911_20170101T045940_003650_006425_45AB')
+    main(sys.argv[1], sys.argv[2])

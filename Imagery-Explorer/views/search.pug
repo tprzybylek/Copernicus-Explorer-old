@@ -3,7 +3,7 @@
 block content
     script(type='text/javascript', src='/javascripts/leaflet/leaflet.js')
     script(src="/javascripts/jquery-3.2.1.min.js")
-    //script(src="/javascripts/jquery-compat-3.0.0-alpha1.js")
+    script(src="/javascripts/js.cookie.js")
 
     h1= title
     if items.length
@@ -16,7 +16,24 @@ block content
                         var selectedClass = "." + $(this).attr('class').split(' ')[0];
                         $(selectedClass).toggleClass("selected");
                     });
+
+                    var IDs = Cookies.get('IDs');
+
+                    $(".addToCart").click(function(){
+                        var ID = $(this).attr("id");
+                        
+                        if (IDs == "" || !IDs){
+                            IDs = ID;
+                        } else {
+                            IDs = IDs + "," + ID
+                            };
+
+                        Cookies.set('IDs', IDs);
+                    });
+
                 });
+
+
         table
             tr
                 th= 'id'
@@ -43,5 +60,7 @@ block content
                     td= item.Percent
                     td 
                         a(href="https://scihub.copernicus.eu/dhus/odata/v1/Products('" + item.ID + "')/$value") pobierz
+                    td 
+                        a(href="#", id=item.ID, title=item.Title, class='addToCart') do koszyka
                     td 
                         a(href="../crop?extent=" + extent + "&ID=" + item.ID + "&title=" + item.Title) przytnij

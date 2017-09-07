@@ -30,6 +30,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="public\javascripts\cookieHandler.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="public\javascripts\jquery-3.2.1.min.js" />
     <Compile Include="public\javascripts\leaflet-map-search.js" />
     <Compile Include="public\javascripts\leaflet-map.js">
@@ -67,6 +70,7 @@
     <Compile Include="public\javascripts\leaflet.draw\Tooltip.js" />
     <Compile Include="public\javascripts\leaflet\leaflet-src.js" />
     <Compile Include="public\javascripts\leaflet\leaflet.js" />
+    <Compile Include="routes\cart.js" />
     <Compile Include="routes\crop.js">
       <SubType>Code</SubType>
     </Compile>
@@ -90,6 +94,7 @@
     <Content Include="public\javascripts\leaflet\leaflet.js.map" />
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
+    <Content Include="views\cart.pug" />
     <Content Include="views\crop.pug" />
     <Content Include="views\help.pug" />
     <Content Include="views\about.pug" />

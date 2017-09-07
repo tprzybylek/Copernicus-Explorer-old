@@ -1,0 +1,36 @@
+﻿extends layout
+
+block content
+    script(src="/javascripts/jquery-3.2.1.min.js")
+    script(src="/javascripts/js.cookie.js")
+
+    script.
+        $(document).ready(function(){
+            var IDs = Cookies.get('IDs');
+            //alert(IDs);
+        });
+
+    h1= title
+    if items.length
+        table
+            tr
+                th= 'id'
+                th= 'title'
+                th= 'ingestiondate'
+                th= 'mode'
+                th= 'orbitdirection'
+                th= 'relativeorbitnumber'
+                th= 'satellite'
+                th= 'size'
+                
+
+            each item in items
+                tr(class= item.ID)
+                    td= item.ID
+                    td= item.Title
+                    td= item.Ingestiondate
+                    td= item.Mode
+                    td= item.Orbitdirection
+                    td= item.Relativeorbitnumber
+                    td= item.Satellite
+                    td= item.Size

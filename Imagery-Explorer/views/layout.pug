@@ -11,6 +11,12 @@ html
         div(id='header')
             div(id='header-inside')
                 div
+                    a(href='/cart')
+                        if cartitems
+                            span Koszyk( + cartitems + )
+                        else
+                            span Koszyk (0)
+                div
                     a(href='/about')
                         span O stronie
                 div
