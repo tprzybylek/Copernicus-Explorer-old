@@ -3,7 +3,6 @@
 block content
     script(type='text/javascript', src='/javascripts/leaflet/leaflet.js')
     script(src="/javascripts/jquery-3.2.1.min.js")
-    script(src="/javascripts/js.cookie.js")
 
     h1= title
     if items.length
@@ -11,24 +10,37 @@ block content
             script.
                 !{mapScript}
         script.
+                
                 $(document).ready(function(){
-                    $("tr, path").click(function(){
+                    $("tr, path").hover(function(){
                         var selectedClass = "." + $(this).attr('class').split(' ')[0];
                         $(selectedClass).toggleClass("selected");
                     });
 
-                    var IDs = Cookies.get('IDs');
+
+                    $(".removeFromCart").click(function(){
+                        var ID = $(this).attr("id");
+                        var IDs = JSON.parse(Cookies.get('IDs'));
+                        var index = IDs.indexOf(ID);
+
+                        if (IDs && index > -1){
+                            IDs.splice(index, 1);
+                        };
+
+                        Cookies.set('IDs', JSON.stringify(IDs));
+                        alert(IDs);
+                    });
 
                     $(".addToCart").click(function(){
                         var ID = $(this).attr("id");
-                        
-                        if (IDs == "" || !IDs){
-                            IDs = ID;
+                        var IDs = JSON.parse(Cookies.get('IDs'));
+                        if (IDs) {
+                            IDs.push(ID);
                         } else {
-                            IDs = IDs + "," + ID
-                            };
-
-                        Cookies.set('IDs', IDs);
+                            var IDs = [ID];
+                        };
+                        Cookies.set('IDs', JSON.stringify(IDs));
+                        alert(IDs);
                     });
 
                 });

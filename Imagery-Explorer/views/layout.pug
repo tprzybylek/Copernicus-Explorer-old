@@ -5,6 +5,7 @@ html
     link(rel='stylesheet', href='/stylesheets/main.css')
     link(rel='stylesheet', href='/javascripts/leaflet/leaflet.css')
     link(rel='stylesheet', href='/javascripts/leaflet.draw/leaflet.draw.css')
+    script(src="/javascripts/js.cookie.js")
 
   body
 
@@ -12,10 +13,8 @@ html
             div(id='header-inside')
                 div
                     a(href='/cart')
-                        if cartitems
-                            span Koszyk( + cartitems + )
-                        else
-                            span Koszyk (0)
+                        span Koszyk 
+                            span(class="itemCount") (0)
                 div
                     a(href='/about')
                         span O stronie

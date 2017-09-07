@@ -2,16 +2,45 @@
 
 block content
     script(src="/javascripts/jquery-3.2.1.min.js")
-    script(src="/javascripts/js.cookie.js")
+    
 
     script.
         $(document).ready(function(){
-            var IDs = Cookies.get('IDs');
-            //alert(IDs);
-        });
+
+                    var IDs = JSON.parse(Cookies.get('IDs'));
+                    $(".itemCount").text("(" + IDs.length + ")")
+
+                    $(".removeFromCart").click(function(){
+                        var ID = $(this).attr("id");
+                        
+                        var index = IDs.indexOf(ID);
+
+                        if (IDs && index > -1){
+                            IDs.splice(index, 1);
+                        };
+
+                        Cookies.set('IDs', JSON.stringify(IDs));
+                        $(".itemCount").text("(" + IDs.length + ")")
+                        $('.' + ID).remove();
+                    });
+
+                    $(".addToCart").click(function(){
+                        var ID = $(this).attr("id");
+                        
+                        if (IDs){
+                            IDs.push(ID);
+                        } else {
+                            var IDs = [ID];
+                        };
+
+                        Cookies.set('IDs', JSON.stringify(IDs));
+                        $(".itemCount").text("(" + IDs.length + ")")
+                    });
+
+                });
 
     h1= title
-    if items.length
+    if items
         table
             tr
                 th= 'id'
@@ -34,3 +63,5 @@ block content
                     td= item.Relativeorbitnumber
                     td= item.Satellite
                     td= item.Size
+                    td 
+                        a(href="#", id=item.ID, title=item.Title, class='removeFromCart') usuń
