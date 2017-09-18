@@ -2,6 +2,7 @@
 var express = require('express');
 var mysql = require('mysql');
 var parse = require('wellknown');
+var router = express.Router();
 
 var turf = require('@turf/turf');
 var turfArea = require('@turf/area');
@@ -19,11 +20,6 @@ pool.getConnection(function (err, connection) {
     console.log('Connection ID: ' + connection.threadId);
 });
 
-var router = express.Router();
-
-var http = require('http');
-
-/* GET search results. */
 router.get('/', function (req, res) {
     var isNotEmpty = true
     if (!req.query.dataod && !req.query.datado && !req.query.extent && (Object.keys(req.query).length == 6)) {
@@ -57,11 +53,38 @@ router.get('/', function (req, res) {
         return polygonParsed;
     };
 
+    function getMaxMinExtent(wkt) {
+        var extentJSON = parse(wkt);
+        var extent = {};
+        var xCoords = [];
+        var yCoords = [];
+
+        for (var key in extentJSON['coordinates'][0]) {
+            xCoords.push(extentJSON['coordinates'][0][key][0]);
+            yCoords.push(extentJSON['coordinates'][0][key][1]);
+        };
+
+        extent['minX'] = Math.min.apply(Math, xCoords);
+        extent['maxX'] = Math.max.apply(Math, xCoords);
+        extent['minY'] = Math.min.apply(Math, yCoords);
+        extent['maxY'] = Math.max.apply(Math, yCoords);
+
+        return extent
+    }
+
     if (isNotEmpty) {
         var Render = function (resultsS1, polygonScriptS1, resultsS2, polygonScriptS2, extent) {
             var OSMCopyright = "{attribution: '&copy; OpenStreetMap contributors'}"//"{attribution: '&copy; <a href=" + '"http://openstreetmap.org\"' + ">OpenStreetMap</a> contributors'}"
             var mapHeader = "var map = L.map('map').setView([52.07, 19.48], 6);\n L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', " + OSMCopyright + ").addTo(map); map.doubleClickZoom.disable();"
             var mapScript = '';
+
+            var extentJSON = getMaxMinExtent(req.query.extent);
+            //var extentJSON = parse(req.query.extent);
+
+            res.cookie('extent', JSON.stringify(extentJSON));
+            //res.cookie('maxX', extentJSON['maxX']);
+            //res.cookie('minY', extentJSON['minY']);
+            //res.cookie('maxY', extentJSON['maxY']);
 
             if (polygonScriptS1) {
                 mapScript = mapHeader + polygonScriptS1;
@@ -221,8 +244,6 @@ router.get('/', function (req, res) {
                         connectionS1.query(myQueryS1, myQueryVariablesS1, function (err, resultsS1, fields) {
                             console.log('Query: ' + myQueryS1);
                             var polygonScriptS1 = '';
-
-
 
                             if (resultsS1.length) {
                                 for (var result in resultsS1) {

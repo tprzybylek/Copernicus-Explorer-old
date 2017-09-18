@@ -1,8 +1,9 @@
 ﻿'use strict';
 var express = require('express');
-var router = express.Router();
 var mysql = require('mysql');
-//http?
+var router = express.Router();
+var async = require('async');
+var randomToken = require('random-token');
 
 var pool = mysql.createPool({
     connectionLimit: 2,
@@ -11,69 +12,47 @@ var pool = mysql.createPool({
     database: 'products'
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.get('/', function (req, res) {
-
     var IDs = JSON.parse(req.cookies.IDs);
+    var extent = JSON.parse(req.cookies.extent);
+    var extentString = JSON.stringify(extent);
+    var token = randomToken(8);
 
-    if (IDs.length > 0) { 
+    var resultsJSON = [];
+    var resultsString = [];
 
-        results = [];
+    console.log(extent);
 
-        /*
-        var myCallback = function (data) {
-            console.log('got data: ' + data);
+    if (IDs.length > 0) {
+        var QueryDB = function (IDs) {
+            var query = "SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?"
+            var resultsJSON = [];
+            var resultsString = [];
+
+            async.forEachOf(IDs, function (value, index, callback) {
+                pool.getConnection(function (err, connection) {
+                    if (err) throw err;
+                    connection.query(query, value, function (err, result, fields) {
+                        connection.release();
+                        var resultString = JSON.stringify(result[0]);
+                        var resultJSON = JSON.parse(resultString);
+                        resultsJSON.push(resultJSON);
+                        resultsString.push(resultString);
+                        if (resultsJSON.length == IDs.length) {
+                            res.render('cart', { title: 'Koszyk', items: resultsJSON, extent: extentString, token: token, resultsString: resultsString });
+                        };
+                    });
+                });
+            });              
         };
 
-        var usingItNow = function (callback) {
-            callback('get it?');
-        };
-
-        usingItNow(myCallback);
-        */
-
-        /*
-        var pushResult = function (data) {
-            console.log('got data: ' + result);
-        };
-
-        var queryDB = function (callback) {
-
-            connection.query("SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?", IDs[0], function (err, result, fields) {
-                if (err) throw err;
-                console.log(result);
-                //res.render('cart', { title: 'Koszyk', items: results });
-                callback(results);
-                connection.release();
-            });
-            
-        };
-        */
-
-        queryDB(pushResult);
-        
-
-
-
-
-
-
-        pool.getConnection(function (err, connection) {
-            if (err) throw err;
-            console.log('Connection ID: ' + connection.threadId);
-
-            connection.query("SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?", IDs[0] ,function (err, result, fields) {
-                if (err) throw err;
-                console.log(result);
-                res.render('cart', { title: 'Koszyk', items: results });
-                connection.release();
-            });
-        });
+        QueryDB(IDs);
 
     } else {
         res.render('cart', { title: 'Koszyk'});
     };
-
-    console.log('IDs: ', IDs)
 });
 
 module.exports = router;

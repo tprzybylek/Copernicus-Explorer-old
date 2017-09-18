@@ -166,8 +166,7 @@ def getProduct (id, title):
         if image.endswith('.tiff'):
             imagepath = extractpath + filename[:-1] + '\\measurement\\' + image
             print imagepath
-
-            cutByBBox(18.30, 18.80, 54.30, 54.80, imagepath, i, extractpath, title)
+            cutByBBox(18.30, 18.80, 54.30, 59.80, imagepath, i, extractpath, title)
             i = i+1
     zipFolder(extractpath + title + '_clip', extractpath + title + '_clip.zip')
 

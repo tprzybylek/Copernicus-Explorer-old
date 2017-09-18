@@ -1,44 +1,6 @@
 ﻿extends layout
 
 block content
-    script(src="/javascripts/jquery-3.2.1.min.js")
-    
-
-    script.
-        $(document).ready(function(){
-
-                    var IDs = JSON.parse(Cookies.get('IDs'));
-                    $(".itemCount").text("(" + IDs.length + ")")
-
-                    $(".removeFromCart").click(function(){
-                        var ID = $(this).attr("id");
-                        
-                        var index = IDs.indexOf(ID);
-
-                        if (IDs && index > -1){
-                            IDs.splice(index, 1);
-                        };
-
-                        Cookies.set('IDs', JSON.stringify(IDs));
-                        $(".itemCount").text("(" + IDs.length + ")")
-                        $('.' + ID).remove();
-                    });
-
-                    $(".addToCart").click(function(){
-                        var ID = $(this).attr("id");
-                        
-                        if (IDs){
-                            IDs.push(ID);
-                        } else {
-                            var IDs = [ID];
-                        };
-
-                        Cookies.set('IDs', JSON.stringify(IDs));
-                        $(".itemCount").text("(" + IDs.length + ")")
-                    });
-
-                });
-
     h1= title
     if items
         table
@@ -65,3 +27,11 @@ block content
                     td= item.Size
                     td 
                         a(href="#", id=item.ID, title=item.Title, class='removeFromCart') usuń
+    form(action='/newOrder', method='POST')
+        textarea(cols="60", name="extent")= extent
+        textarea(cols="60", name="resultsString")= resultsString
+        input(type='email', name='email', value='example@example.com')
+        input(type='text', name='token',value=token)
+        input(type='submit', value='Złóż zamówienie')
+
+    

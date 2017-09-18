@@ -74,6 +74,10 @@
     <Compile Include="routes\crop.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="routes\newOrder.js" />
+    <Compile Include="routes\order.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="routes\search.js" />
     <Compile Include="routes\about.js" />
     <Compile Include="routes\help.js" />
@@ -92,10 +96,14 @@
     <Content Include="public\javascripts\leaflet\leaflet-src.js.map" />
     <Content Include="public\javascripts\leaflet\leaflet.css" />
     <Content Include="public\javascripts\leaflet\leaflet.js.map" />
+    <Content Include="public\orders.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\stylesheets\main.css" />
     <Content Include="README.md" />
     <Content Include="views\cart.pug" />
     <Content Include="views\crop.pug" />
+    <Content Include="views\newOrder.pug" />
     <Content Include="views\help.pug" />
     <Content Include="views\about.pug" />
     <Content Include="views\search.pug" />

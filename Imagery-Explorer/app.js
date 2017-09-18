@@ -13,6 +13,8 @@ var help = require('./routes/help');
 var about = require('./routes/about');
 var crop = require('./routes/crop');
 var cart = require('./routes/cart');
+var newOrder = require('./routes/newOrder');
+var order = require('./routes/order');
 var users = require('./routes/users');
 
 var app = express();
@@ -29,6 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//app.use('/', cart);
 app.use('/', index);
 app.use('/users', users);
 app.use('/search', search);
@@ -36,6 +39,8 @@ app.use('/help', help);
 app.use('/about', about);
 app.use('/crop', crop);
 app.use('/cart', cart);
+app.use('/newOrder', newOrder);
+app.use('/order', order);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
