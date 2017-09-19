@@ -50,9 +50,11 @@ router.get('/', function (req, res) {
             };
 
             QueryDB(IDs);
-    } else {
-        res.render('cart', { title: 'Koszyk' });
-    };
+        } else {
+            res.render('cart', { title: 'Koszyk' });
+        };
+    }
 });
+
 
 module.exports = router;
