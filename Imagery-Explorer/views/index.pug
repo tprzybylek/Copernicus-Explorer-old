@@ -16,9 +16,9 @@ block content
             
             p Satelita:
             p
-                input(type='radio',name='satellite', value='S1') 
+                input(type='radio',name='satellite', value='S1', id='S1') 
                 |Sentinel-1
-                input(type='radio',name='satellite', value='S2') 
+                input(type='radio',name='satellite', value='S2', id='S2') 
                 |Sentinel-2
                 //input(type='radio',name='satellite', value='') 
                 //|dowolny
@@ -26,7 +26,7 @@ block content
             p
                 input(class='inputbox', type='text', name='extent', value='', id='extent_form', readonly)
         div(id='map', class='formbox')
-        div(class='formbox')
+        div(class='formbox S1 hidden')
             h3 Sentinel-1:
             p
                 p Kierunek orbity:
@@ -73,7 +73,7 @@ block content
 
                 p Względny numer orbity: 
                     input(class='inputbox', type='text', name='relativeorbitnumberS1', value='')
-        div(class='formbox')
+        div(class='formbox S2 hidden')
             h3 Sentinel-2:
             p
                 p Kierunek orbity:

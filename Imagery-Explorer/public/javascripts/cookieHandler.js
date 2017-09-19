@@ -4,11 +4,30 @@
         $(selectedClass).toggleClass("selected");
     });
 
+    $('input[type="radio"]').click(function () {
+        if ($(this).attr('id') == 'S1') {
+            $('.S1').show();
+            $('.S2').hide();
+        }
+
+        else if ($(this).attr('id') == 'S2'){
+            $('.S2').show();
+            $('.S1').hide();
+        }
+    });
+
     IDs = Cookies.get('IDs')
     if (IDs) {
         var IDs = JSON.parse(IDs);
         $(".itemCount").text("(" + IDs.length + ")")
     }
+
+    $(".emptyCart").click(function () {
+        Cookies.remove('IDs');
+        Cookies.remove('extent');
+        $(".itemCount").text("(0)")
+        $("tr").remove();
+    });
 
     $(".removeFromCart").click(function () {
         var ID = $(this).attr("id");

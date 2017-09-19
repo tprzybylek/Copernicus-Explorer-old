@@ -104,3 +104,6 @@ table {
 table, th, td {
     border: 1px solid black;
 }
+.hidden {
+    display: none;
+}

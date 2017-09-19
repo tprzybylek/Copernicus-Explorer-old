@@ -11,21 +11,21 @@ block content
                 !{mapScript}
         table
             tr
-                th= 'id'
-                th= 'title'
-                th= 'ingestiondate'
-                th= 'mode'
-                th= 'orbitdirection'
-                th= 'relativeorbitnumber'
-                th= 'satellite'
-                th= 'size'
-                th= 'percent'
+                th= 'ID'
+                //th= 'Tytuł'
+                th= 'Data pozyskania'
+                th= 'Tryb'
+                th= 'Kierunek orbity'
+                th= 'Względny numer orbity'
+                th= 'Satelita'
+                th= 'Rozmiar'
+                th= '% pokrycia'
                 
 
             each item in items
                 tr(class= item.ID)
                     td= item.ID
-                    td= item.Title
+                    //td= item.Title
                     td= item.Ingestiondate
                     td= item.Mode
                     td= item.Orbitdirection

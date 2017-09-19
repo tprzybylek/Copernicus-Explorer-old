@@ -78,8 +78,14 @@ router.get('/', function (req, res) {
             var mapHeader = "var map = L.map('map').setView([52.07, 19.48], 6);\n L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', " + OSMCopyright + ").addTo(map); map.doubleClickZoom.disable();"
             var mapScript = '';
 
-            var extentJSON = getMaxMinExtent(req.query.extent);
-            //var extentJSON = parse(req.query.extent);
+            if (req.query.extent) {
+                var extentJSON = getMaxMinExtent(req.query.extent);
+                //var extentJSON = parse(req.query.extent);
+            } else {
+                var extentJSON = { 'minX': 0.0, 'maxX': 0.0, 'minY': 0.0, 'maxY': 0.0 };
+            };
+            
+            
 
             res.cookie('extent', JSON.stringify(extentJSON));
             //res.cookie('maxX', extentJSON['maxX']);

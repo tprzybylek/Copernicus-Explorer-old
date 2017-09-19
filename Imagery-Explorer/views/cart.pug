@@ -5,14 +5,14 @@ block content
     if items
         table
             tr
-                th= 'id'
-                th= 'title'
-                th= 'ingestiondate'
-                th= 'mode'
-                th= 'orbitdirection'
-                th= 'relativeorbitnumber'
-                th= 'satellite'
-                th= 'size'
+                th= 'ID'
+                th= 'Tytuł'
+                th= 'Data pozyskania'
+                //th= 'Tryb'
+                //th= 'Kierunek orbity'
+                //th= 'Względny numer orbity'
+                th= 'Satelita'
+                th= 'Rozmiar'
                 
 
             each item in items
@@ -20,18 +20,24 @@ block content
                     td= item.ID
                     td= item.Title
                     td= item.Ingestiondate
-                    td= item.Mode
-                    td= item.Orbitdirection
-                    td= item.Relativeorbitnumber
+                    //td= item.Mode
+                    //td= item.Orbitdirection
+                    //td= item.Relativeorbitnumber
                     td= item.Satellite
                     td= item.Size
                     td 
-                        a(href="#", id=item.ID, title=item.Title, class='removeFromCart') usuń
-    form(action='/newOrder', method='POST')
-        textarea(cols="60", name="extent")= extent
-        textarea(cols="60", name="resultsString")= resultsString
-        input(type='email', name='email', value='example@example.com')
-        input(type='text', name='token',value=token)
-        input(type='submit', value='Złóż zamówienie')
+                        a(href="#", id=item.ID, title=item.Title, class='removeFromCart') usuń  
+    if items
+        div(class='formbox')
+            p
+                button(class='emptyCart') Opróżnij koszyk
 
-    
+            form(action='/newOrder', method='POST')
+                input(type="hidden", name="extent", value=extent)
+                input(type="hidden", name="resultsString", value=resultsString)
+                input(type="hidden", name='token',value=token)
+                p Adres E-Mail:
+                p
+                    input(type='email', name='email', value='example@example.com')
+
+                input(type='submit', value='Złóż zamówienie')

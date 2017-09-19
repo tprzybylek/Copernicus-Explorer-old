@@ -1,5 +1,9 @@
 ﻿extends layout
 
 block content
-    h1= title
-    p Welcome to #{title}
+    h1 Złożono nowe zamówienie
+    p ID zamówienia:
+    p= orderID
+    p Link do strony pobierania:
+    a(href="../order?token=" + orderID)= "../order?token=" + orderID
+    p Zapisz powyższy link w celu pobrania zamówienia, gdy będzie ono gotowe

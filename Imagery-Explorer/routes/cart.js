@@ -15,43 +15,43 @@ var pool = mysql.createPool({
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/', function (req, res) {
-    var IDs = JSON.parse(req.cookies.IDs);
-    var extent = JSON.parse(req.cookies.extent);
-    var extentString = JSON.stringify(extent);
-    var token = randomToken(8);
+    if (req.cookies.IDs) {
+        var IDs = JSON.parse(req.cookies.IDs);
+        var extent = JSON.parse(req.cookies.extent);
+        var extentString = JSON.stringify(extent);
+        var token = randomToken(8);
 
-    var resultsJSON = [];
-    var resultsString = [];
+        var resultsJSON = [];
+        var resultsString = [];
 
-    console.log(extent);
+        console.log(extent);
 
-    if (IDs.length > 0) {
-        var QueryDB = function (IDs) {
-            var query = "SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?"
-            var resultsJSON = [];
-            var resultsString = [];
+        if (IDs.length > 0) {
+            var QueryDB = function (IDs) {
+                var query = "SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?"
+                var resultsJSON = [];
+                var resultsString = [];
 
-            async.forEachOf(IDs, function (value, index, callback) {
-                pool.getConnection(function (err, connection) {
-                    if (err) throw err;
-                    connection.query(query, value, function (err, result, fields) {
-                        connection.release();
-                        var resultString = JSON.stringify(result[0]);
-                        var resultJSON = JSON.parse(resultString);
-                        resultsJSON.push(resultJSON);
-                        resultsString.push(resultString);
-                        if (resultsJSON.length == IDs.length) {
-                            res.render('cart', { title: 'Koszyk', items: resultsJSON, extent: extentString, token: token, resultsString: resultsString });
-                        };
+                async.forEachOf(IDs, function (value, index, callback) {
+                    pool.getConnection(function (err, connection) {
+                        if (err) throw err;
+                        connection.query(query, value, function (err, result, fields) {
+                            connection.release();
+                            var resultString = JSON.stringify(result[0]);
+                            var resultJSON = JSON.parse(resultString);
+                            resultsJSON.push(resultJSON);
+                            resultsString.push(resultString);
+                            if (resultsJSON.length == IDs.length) {
+                                res.render('cart', { title: 'Koszyk', items: resultsJSON, extent: extentString, token: token, resultsString: resultsString });
+                            };
+                        });
                     });
                 });
-            });              
-        };
+            };
 
-        QueryDB(IDs);
-
+            QueryDB(IDs);
     } else {
-        res.render('cart', { title: 'Koszyk'});
+        res.render('cart', { title: 'Koszyk' });
     };
 });
 

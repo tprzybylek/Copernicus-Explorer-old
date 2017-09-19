@@ -75,7 +75,7 @@ router.post('/', function (req, res) {
         console.log('finished');
     });
 
-    res.render('newOrder', { title: 'new order' });
+    res.render('newOrder', { title: 'new order', orderID: req.body.token });
 });
 
 module.exports = router;
