@@ -8,9 +8,9 @@ block content
                 th= 'ID'
                 th= 'Tytuł'
                 th= 'Data pozyskania'
-                //th= 'Tryb'
-                //th= 'Kierunek orbity'
-                //th= 'Względny numer orbity'
+                th= 'Tryb'
+                th= 'Kierunek orbity'
+                th= 'Względny numer orbity'
                 th= 'Satelita'
                 th= 'Rozmiar'
                 
@@ -20,11 +20,11 @@ block content
                     td= item.ID
                     td= item.Title
                     td= item.Ingestiondate
-                    //td= item.Mode
-                    //td= item.Orbitdirection
-                    //td= item.Relativeorbitnumber
+                    td= item.Mode
+                    td= item.Orbitdirection
+                    td= item.Relativeorbitnumber
                     td= item.Satellite
-                    td= item.Size
+                    td= (item.Size/1000000000).toString() + ' GB'
                     td 
                         a(href="#", id=item.ID, title=item.Title, class='removeFromCart') usuń  
     if items
@@ -36,7 +36,7 @@ block content
                 input(type="hidden", name="extent", value=extent)
                 input(type="hidden", name="resultsString", value=resultsString)
                 input(type="hidden", name='token',value=token)
-                p Adres E-Mail:
+                p Adres e-mail:
                 p
                     input(type='email', name='email', value='example@example.com')
 

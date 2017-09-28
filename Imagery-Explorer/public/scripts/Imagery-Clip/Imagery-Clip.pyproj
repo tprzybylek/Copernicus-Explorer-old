@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>c4deb0b6-4ba8-4b2d-a95c-a6e4acbf6730</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Imagery_Clip.py</StartupFile>
+    <StartupFile>Imagery_Clip_test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
