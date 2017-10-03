@@ -1,0 +1,12 @@
+﻿extends layout
+
+block content
+    h1 Zamówienie
+    p ID zamówienia:
+    p= orderID
+
+    if status == '1'
+        p Link:
+        a(href="d:/test/orders/" + orderID + ".zip") Pobierz
+    else
+        p Zamówienie w trakcie przetwarzania

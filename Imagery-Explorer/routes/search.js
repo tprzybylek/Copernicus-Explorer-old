@@ -117,8 +117,8 @@ router.get('/', function (req, res) {
                             count = false
                         };
                         myQueryS1 = myQueryS1 + ' (Ingestiondate BETWEEN ? AND ?)';
-                        myQueryVariablesS1.push(req.query.dataod);
-                        myQueryVariablesS1.push(req.query.datado);
+                        myQueryVariablesS1.push(req.query.dataod + " 00:00");
+                        myQueryVariablesS1.push(req.query.datado + " 23:59");
                         count = true;
                     };
                     if (req.query.polarisationmodeS1) {

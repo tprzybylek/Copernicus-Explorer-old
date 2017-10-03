@@ -7,9 +7,11 @@ import time
 
 startTime = time.time()
 
-order = '{"token":"6ewqnu0r","orderedTime":1506515962901,"completedTime":1506515963,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"8b61bae7-d96d-4d7d-9d83-a653e2913ea4","title":"S1B_IW_GRDH_1SDV_20170102T165051_20170102T165116_003672_0064CF_5582","satellite":"S1B"}],"email":"example@example.com","status":"0"}'
+order = '{"token":"6b8jld9y","orderedTime":1507033205159,"completedTime":1507033205,"extent":{"minX":13.987655639648438,"maxX":14.146957397460936,"minY":50.89944943465081,"maxY":50.9820896490318},"cart":[{"ID":"f7d4df66-9169-4eb6-b1cb-826058cc728a","title":"","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
+#order = '{"token":"6ewqnu0r","orderedTime":1506515962901,"completedTime":1506515963,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"8b61bae7-d96d-4d7d-9d83-a653e2913ea4","title":"S1B_IW_GRDH_1SDV_20170102T165051_20170102T165116_003672_0064CF_5582","satellite":"S1B"}],"email":"example@example.com","status":"0"}'
 #order = '{"token":"0aovfa1t","orderedTime":1506517319561,"completedTime":1506517320,"extent":{"minX":19.824142456054688,"maxX":20.131759643554688,"minY":50.00850024720049,"maxY":50.10724739511635},"cart":[{"ID":"939d3727-b5b9-4969-aa1f-aeedb79551df","title":"S1A_IW_GRDH_1SDV_20170110T163434_20170110T163459_014772_0180D5_91A3","satellite":"S1A"}],"email":"example@example.com","status":"0"}'
 #order = '{"status": "1", "orderedTime": 1506408181116, "completedTime": 1506408631.142, "cart": [{"satellite": "S1A", "ID": "1ad1bbad-f624-4b21-ad7c-ac6377144f8e", "title": "S1A_IW_GRDH_1SDV_20170110T163459_20170110T163524_014772_0180D5_D774"}], "token": "b993ku02", "extent": {"minX": 16.8475341796875, "minY": 50.98043613046862, "maxX": 17.2265625, "maxY": 51.23565415168644}, "email": "example@example.com"}'
+
 extractPath = 'D:\\test\\downloaded\\'
 ordersPath = 'D:\\test\\orders\\'
 
@@ -101,11 +103,14 @@ def clipImages(token, extent, title, satellite):
 
         #################################################
 
-        geotransform = [geotransform['minX'], (geotransform['maxX']-geotransform['minX'])/cols, 0, geotransform['maxY'], 0, (geotransform['maxY']-geotransform['minY'])/rows*(-1)]
-
         error_threshold = 0.125
         resampling = gdal.GRA_NearestNeighbour
         dataset_middle = gdal.AutoCreateWarpedVRT(dataset, None, WKT_Projection, resampling, error_threshold)
+
+        cols = dataset_middle.RasterXSize
+        rows = dataset_middle.RasterYSize
+
+        geotransform = [geotransform['minX'], (geotransform['maxX']-geotransform['minX'])/cols, 0, geotransform['maxY'], 0, (geotransform['maxY']-geotransform['minY'])/rows*(-1)]
 
         dataset = None
 
@@ -131,23 +136,23 @@ def clipImages(token, extent, title, satellite):
         new_cols = i2 - i1 + 1
         new_rows = j1 - j2 + 1
 
-        data = dataset_middle.ReadAsArray(i2, j2, new_cols, new_rows)
+        data = dataset_middle.ReadAsArray(i1, j2, new_cols, new_rows)
 
         #################################################
 
         newGCPs = []
         diff = i2-i1
 
-        i, j = GetPixelCoords(i2 + diff, j2)
+        i, j = GetPixelCoords(i2, j2)
         newGCPs.append(gdal.GCP(i, j, 0.0, new_cols-1, 0.0))                  #BR
 
-        i, j = GetPixelCoords(i1 + diff, j2)
+        i, j = GetPixelCoords(i1, j2)
         newGCPs.append(gdal.GCP(i, j, 0.0, 0.0, 0.0))                         #UL
 
-        i, j = GetPixelCoords(i1 + diff, j1)
+        i, j = GetPixelCoords(i1, j1)
         newGCPs.append(gdal.GCP(i, j, 0.0, 0.0, new_rows-1))                  #BL
 
-        i, j = GetPixelCoords(i2 + diff, j1)
+        i, j = GetPixelCoords(i2, j1)
         newGCPs.append(gdal.GCP(i, j, 0.0, new_cols-1, new_rows-1))           #UR
 
         #################################################
@@ -199,7 +204,7 @@ def main (order):
             printMessage('Is not downloaded', startTime)
             downloadProduct(j, product)
 
-        #unzipProduct(product['title'])
+        unzipProduct(product['title'])
 
         clipImages(j['token'], j['extent'], product['title'], product['satellite'])
 

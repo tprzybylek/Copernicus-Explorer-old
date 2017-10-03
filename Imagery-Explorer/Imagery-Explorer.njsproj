@@ -103,6 +103,7 @@
     <Content Include="README.md" />
     <Content Include="views\cart.pug" />
     <Content Include="views\crop.pug" />
+    <Content Include="views\order.pug" />
     <Content Include="views\newOrder.pug" />
     <Content Include="views\help.pug" />
     <Content Include="views\about.pug" />
