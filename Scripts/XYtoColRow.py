@@ -1,12 +1,20 @@
 bbXYs = [[13.8932, 50.9964], [14.1898, 50.9964], [14.1898, 50.8977], [13.8932,50.8977], [13.713160,50.927328], [13.943002,50.927328], [13.943020,50.822501], [13.713167,50.822498]]
 
-originXY = [12.0767, 52.0816]
+#originXY = [12.0767, 52.0816]
 
-xPixelSize = 0.000121607
-yPixelSize = -0.000121607
+#xPixelSize = 0.000121607
+#yPixelSize = -0.000121607
 
-xPixelCount = 34510.0
-yPixelCount = 15697.0
+#xPixelCount = 34510.0
+#yPixelCount = 15697.0
+
+originXY = [399960.0, 5700000.0]
+
+xPixelSize = 10.0
+yPixelSize = -10.0
+
+xPixelCount = 10980.0
+yPixelCount = 10980.0
 
 def getColRow(XY):
     x = XY[0]

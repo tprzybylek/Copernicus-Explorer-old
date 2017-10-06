@@ -4,10 +4,14 @@ import requests
 import zipfile, shutil
 import json
 import time
+import numpy
+from osgeo import ogr, osr
 
 startTime = time.time()
 
-order = '{"token":"6b8jld9y","orderedTime":1507033205159,"completedTime":1507033205,"extent":{"minX":13.987655639648438,"maxX":14.146957397460936,"minY":50.89944943465081,"maxY":50.9820896490318},"cart":[{"ID":"f7d4df66-9169-4eb6-b1cb-826058cc728a","title":"","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
+#title s2???
+
+order = '{"token":"6b8jld9y","orderedTime":1507033205159,"completedTime":1507033205,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"ca49f1ba-cd24-43d3-b6ae-5ed5ae5f7b8b","title":"S2A_OPER_PRD_MSIL1C_PDMC_20160828T210754_R022_V20160827T101022_20160827T101025","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
 #order = '{"token":"6ewqnu0r","orderedTime":1506515962901,"completedTime":1506515963,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"8b61bae7-d96d-4d7d-9d83-a653e2913ea4","title":"S1B_IW_GRDH_1SDV_20170102T165051_20170102T165116_003672_0064CF_5582","satellite":"S1B"}],"email":"example@example.com","status":"0"}'
 #order = '{"token":"0aovfa1t","orderedTime":1506517319561,"completedTime":1506517320,"extent":{"minX":19.824142456054688,"maxX":20.131759643554688,"minY":50.00850024720049,"maxY":50.10724739511635},"cart":[{"ID":"939d3727-b5b9-4969-aa1f-aeedb79551df","title":"S1A_IW_GRDH_1SDV_20170110T163434_20170110T163459_014772_0180D5_91A3","satellite":"S1A"}],"email":"example@example.com","status":"0"}'
 #order = '{"status": "1", "orderedTime": 1506408181116, "completedTime": 1506408631.142, "cart": [{"satellite": "S1A", "ID": "1ad1bbad-f624-4b21-ad7c-ac6377144f8e", "title": "S1A_IW_GRDH_1SDV_20170110T163459_20170110T163524_014772_0180D5_D774"}], "token": "b993ku02", "extent": {"minX": 16.8475341796875, "minY": 50.98043613046862, "maxX": 17.2265625, "maxY": 51.23565415168644}, "email": "example@example.com"}'
@@ -16,6 +20,7 @@ extractPath = 'D:\\test\\downloaded\\'
 ordersPath = 'D:\\test\\orders\\'
 
 ############################
+
 
 def printMessage(message, startTime):
 
@@ -81,7 +86,7 @@ def zipOrder(token):
         zipFile.close()
 
 def clipImages(token, extent, title, satellite):
-    def clipImage(extent, sourceImagePath, outputImagePath):
+    def clipImageTiff(extent, sourceImagePath, outputImagePath):
         WKT_Projection = 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
         
         dataset = gdal.Open(sourceImagePath)
@@ -172,7 +177,79 @@ def clipImages(token, extent, title, satellite):
         dst_ds = None
         dataset_middle = None
 
-############################
+    
+    def clipImageJP2(extent, sourceImagePath, outputImagePath):
+        WGS84_projection = 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]'
+        
+        in_srs = osr.SpatialReference()
+        in_srs.ImportFromWkt(WGS84_projection)
+
+        dataset = gdal.Open(sourceImagePath)
+        UTM_projection = dataset.GetProjection()
+
+        out_srs = osr.SpatialReference()
+        out_srs.ImportFromWkt(UTM_projection)
+
+        cols = dataset.RasterXSize
+        rows = dataset.RasterYSize
+
+        #################################################
+        
+        geotransform = dataset.GetGeoTransform()
+
+        #################################################
+
+        error_threshold = 0.125
+        resampling = gdal.GRA_NearestNeighbour
+        dataset_middle = gdal.AutoCreateWarpedVRT(dataset, None, UTM_projection, resampling, error_threshold)
+
+        cols = dataset_middle.RasterXSize
+        rows = dataset_middle.RasterYSize
+
+        #################################################
+
+        xOrigin = geotransform[0]
+        yOrigin = geotransform[3]
+        pixelWidth = geotransform[1]
+        pixelHeight = geotransform[5]
+
+        transform = osr.CoordinateTransformation(in_srs, out_srs)
+
+        i1j1 = transform.TransformPoint(extent['minX'], extent['minY'])
+        i2j2 = transform.TransformPoint(extent['maxX'], extent['maxY'])
+
+        i1 = int((i1j1[0] - xOrigin) / pixelWidth)
+        j1 = int((i1j1[1] - yOrigin) / pixelHeight)
+        i2 = int((i2j2[0] - xOrigin) / pixelWidth)
+        j2 = int((i2j2[1] - yOrigin) / pixelHeight)
+
+        new_cols = i2 - i1 + 1
+        new_rows = j1 - j2 + 1
+
+        data = dataset.ReadAsArray(i1, j2, new_cols, new_rows)
+
+        if numpy.any(data):
+            newX = xOrigin + i1 * pixelWidth
+            newY = yOrigin + j2 * pixelHeight
+
+            new_transform = (newX, pixelWidth, 0.0, newY, 0.0, pixelHeight)
+
+            dst_ds = gdal.GetDriverByName('GTiff').Create(outputImagePath, new_cols, new_rows, bands = 1, eType = gdal.GDT_Int16)
+
+            dst_ds.SetProjection(UTM_projection)
+            dst_ds.SetGeoTransform(new_transform)
+
+            dst_ds.GetRasterBand(1).WriteArray(data)
+    
+            dst_ds = None
+            dataset_middle = None
+            dataset = None
+
+        else:
+
+            dst_ds = None
+            dataset_middle = None
+            dataset = None
 
     if not os.path.exists(ordersPath + token + '\\' + title):
         os.makedirs(ordersPath + token + '\\' + title)
@@ -183,10 +260,23 @@ def clipImages(token, extent, title, satellite):
             if image.endswith('.tiff'):
                 sourceImagePath = extractPath + title + '.SAFE\\measurement\\' + image
                 outputImagePath = ordersPath + token + '\\' + title + '\\' + image
-                clipImage(extent, sourceImagePath, outputImagePath)
-        pass
+                clipImageTiff(extent, sourceImagePath, outputImagePath)
+
     elif (satellite[:2] == 'S2'):
         printMessage('Sattelite not supported...yet', startTime)
+        printMessage('Clipping image', startTime)
+
+        subfolder = os.listdir(extractPath + title + '.SAFE\\GRANULE\\')
+
+        for sub in subfolder:
+            if not os.path.exists(ordersPath + token + '\\' + title + '\\' + sub):
+                os.makedirs(ordersPath + token + '\\' + title + '\\' + sub)
+            for image in os.listdir(extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\'):
+                if image.endswith('.jp2'):
+                    sourceImagePath = extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\' + image
+                    outputImagePath = ordersPath + token + '\\' + title + '\\' + sub + '\\' + image[:-4] + '.tiff'
+                    clipImageJP2(extent, sourceImagePath, outputImagePath)
+
     else:
         printMessage('Sattelite not supported', startTime)
 
@@ -204,7 +294,7 @@ def main (order):
             printMessage('Is not downloaded', startTime)
             downloadProduct(j, product)
 
-        unzipProduct(product['title'])
+    #    unzipProduct(product['title'])
 
         clipImages(j['token'], j['extent'], product['title'], product['satellite'])
 
