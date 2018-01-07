@@ -1,6 +1,4 @@
-# RasterClipper.py - clip a geospatial image using a shapefile
-
-import operator
+import numpy
 from osgeo import gdal, gdalnumeric, ogr, osr
 from PIL import Image, ImageDraw
 
@@ -69,7 +67,6 @@ minRasterY= maxRasterY+(rasterHeight*yPixelSize)
 # Create an OGR layer from a boundary shapefile
 shapef = ogr.Open("%s.shp" % shp)
 shaperWKT = "POLYGON ((%s %s, %s %s, %s %s, %s %s, %s %s))" % (str(minRasterX), str(maxRasterY), str(maxRasterX), str(maxRasterY), str(maxRasterX), str(minRasterY), str(minRasterX), str(minRasterY), str(minRasterX), str(maxRasterY))
-print shaperWKT
 
 shaper = ogr.CreateGeometryFromWkt(shaperWKT)
 
@@ -97,7 +94,6 @@ if (lrY > rasterHeight):
 pxWidth = int(lrX - ulX)
 pxHeight = int(lrY - ulY)
 
-#clip = srcArray[:, ulY:lrY, ulX:lrX]
 clip = srcArray[ulY:lrY, ulX:lrX]
 
 # Create a new geomatrix for the image
@@ -118,17 +114,65 @@ pts = shapei.GetGeometryRef(0)
 
 for p in range(pts.GetPointCount()):
     points.append((pts.GetX(p), pts.GetY(p)))
-    #print pts.GetX(p), pts.GetY(p)
 
-
-### ### ### !!! !!! !!! !!!
 for p in points:
     pixels.append(world2Pixel(geoTrans, p[0], p[1]))
 
 rasterPoly = Image.new("L", (pxWidth, pxHeight), 1)
 rasterize = ImageDraw.Draw(rasterPoly)
 rasterize.polygon(pixels, 0)
-mask = imageToArray(rasterPoly)   
+mask = imageToArray(rasterPoly)
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+if not numpy.all(mask[1]):
+    topOffset = 0
+else:
+    for i, v in enumerate(mask):
+        if numpy.all(v):
+            topOffset = i
+            #print i, v
+print "topOffset =", topOffset
+
+mask = numpy.rot90(mask)
+
+if not numpy.all(mask[1]):
+    rightOffset = 0
+else:
+    for i, v in enumerate(mask):
+        if numpy.all(v):
+            rightOffset = i
+            #print i, v
+print "rightOffset =", rightOffset
+
+mask = numpy.rot90(mask)
+
+if not numpy.all(mask[1]):
+    bottomOffset = 0
+else:
+    for i, v in enumerate(mask):
+        if numpy.all(v):
+            bottomOffset = i
+            #print i, v
+print "bottomOffset =", bottomOffset
+
+mask = numpy.rot90(mask)
+
+if not numpy.all(mask[1]):
+    leftOffset = 0
+else:
+    for i, v in enumerate(mask):
+        if numpy.all(v):
+            leftOffset = i
+            #print i, v
+print "leftOffset =", leftOffset
+
+mask = numpy.rot90(mask)
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+#mask = mask[ulY+topOffset:lrY-bottomOffset, ulX+leftOffset:lrX-rightOffset]
+#clip = clip[ulY+topOffset:lrY-bottomOffset, ulX+leftOffset:lrX-rightOffset]
 
 # Clip the image using the mask
 clip = gdalnumeric.choose(mask, (clip, 0)).astype(gdalnumeric.uint16 )
