@@ -72,6 +72,12 @@ router.get('/', function (req, res) {
         return extent
     }
 
+    function JSONtoWKT() {
+        var wkt = 'POLYGON(('
+        wkt = wkt + req.query.minX + ' ' + req.query.maxY + ',' + req.query.maxX + ' ' + req.query.maxY + ',' + req.query.maxX + ' ' + req.query.minY + ',' + req.query.minX + ' ' + req.query.minY + ',' + req.query.minX + ' ' + req.query.maxY + '))'
+        return wkt
+    };
+
     if (isNotEmpty) {
         var Render = function (resultsS1, polygonScriptS1, resultsS2, polygonScriptS2, extent) {
             var OSMCopyright = "{attribution: '&copy; OpenStreetMap contributors'}"//"{attribution: '&copy; <a href=" + '"http://openstreetmap.org\"' + ">OpenStreetMap</a> contributors'}"
@@ -79,7 +85,14 @@ router.get('/', function (req, res) {
             var mapScript = '';
 
             if (req.query.extent) {
-                var extentJSON = getMaxMinExtent(req.query.extent);
+                //var extentJSON = getMaxMinExtent(req.query.extent);
+                var extentJSON = {};
+
+                extentJSON['minX'] = Number(req.query.minX);
+                extentJSON['maxX'] = Number(req.query.maxX);
+                extentJSON['minY'] = Number(req.query.minY);
+                extentJSON['maxY'] = Number(req.query.maxY);
+
                 //var extentJSON = parse(req.query.extent);
             } else {
                 var extentJSON = { 'minX': 0.0, 'maxX': 0.0, 'minY': 0.0, 'maxY': 0.0 };
@@ -155,9 +168,9 @@ router.get('/', function (req, res) {
                             count = false
                         };
                         myQueryS1 = myQueryS1 + ' (ST_Overlaps(Coordinates, ST_GeomFromText(?)) OR ST_Within(ST_GeomFromText(?), Coordinates) OR ST_Within(Coordinates, ST_GeomFromText(?)))';
-                        myQueryVariablesS1.push(req.query.extent)
-                        myQueryVariablesS1.push(req.query.extent)
-                        myQueryVariablesS1.push(req.query.extent)
+                        myQueryVariablesS1.push(JSONtoWKT())
+                        myQueryVariablesS1.push(JSONtoWKT())
+                        myQueryVariablesS1.push(JSONtoWKT())
 
                         count = true;
                     };
@@ -227,9 +240,9 @@ router.get('/', function (req, res) {
                             count = false
                         };
                         myQueryS2 = myQueryS2 + ' (Overlaps(Coordinates, ST_GeomFromText(?)) OR Within(ST_GeomFromText(?), Coordinates) OR Within(Coordinates, ST_GeomFromText(?)))';
-                        myQueryVariablesS2.push(req.query.extent)
-                        myQueryVariablesS2.push(req.query.extent)
-                        myQueryVariablesS2.push(req.query.extent)
+                        myQueryVariablesS2.push(JSONtoWKT())
+                        myQueryVariablesS2.push(JSONtoWKT())
+                        myQueryVariablesS2.push(JSONtoWKT())
                         count = true;
                     };
                     myQueryS2 = myQueryS2 + ' ORDER BY Ingestiondate DESC'

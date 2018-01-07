@@ -2,15 +2,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>9d51286c-df90-4569-8d65-8a4a394e744a</ProjectGuid>
+    <ProjectGuid>e97a67d5-aad3-4ee5-b0fb-1e6df8ccdf9b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Imagery_Download_Old.py</StartupFile>
+    <StartupFile>Imagery_RollingStock.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>Imagery-Download</Name>
-    <RootNamespace>Imagery-Download</RootNamespace>
+    <Name>Imagery-RollingStock</Name>
+    <RootNamespace>Imagery-RollingStock</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,12 +21,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Imagery_Download_Old.py" />
-    <Compile Include="Imagery_Download.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="log.txt" />
-    <Content Include="search.xml" />
+    <Compile Include="Imagery_RollingStock.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

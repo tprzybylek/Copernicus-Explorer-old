@@ -24,7 +24,21 @@ block content
                 //|dowolny
             p Zakres przestrzenny: 
             p
-                input(class='inputbox', type='text', name='extent', value='', id='extent_form', readonly)
+                input(class='inputbox', type='text', name='extent', value='', id='extent_form', hidden)
+
+                input(class='inputbox', type='text', name='minX', value='', placeholder='minX', id='minX')
+                input(class='inputbox', type='text', name='maxY', value='', placeholder='maxY', id='maxY')
+                input(class='inputbox', type='text', name='maxX', value='', placeholder='maxX', id='maxX')
+                input(class='inputbox', type='text', name='minY', value='', placeholder='minY', id='minY')
+
+
+
+
+
+
+
+
+
         div(id='map', class='formbox')
         div(class='formbox S1 hidden')
             h3 Sentinel-1:

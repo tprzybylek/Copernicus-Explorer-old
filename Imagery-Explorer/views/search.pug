@@ -38,7 +38,7 @@ block content
                     td 
                         a(href="https://scihub.copernicus.eu/dhus/odata/v1/Products('" + item.ID + "')/$value") pobierz
                     td 
-                        if item.Producttype=='GRD' || item.Producttype=='S2MSI1C'
+                        if item.Producttype=='GRD' || item.Producttype=='S2MSI1C' || item.Producttype=='S2MSI2A'
                             a(href="#", id=item.ID, title=item.Title, class='addToCart') do koszyka
                     //td 
                         //a(href="../crop?extent=" + extent + "&ID=" + item.ID + "&title=" + item.Title) przytnij

@@ -28,7 +28,7 @@ router.get('/', function (req, res) {
 
         if (IDs.length > 0) {
             var QueryDB = function (IDs) {
-                var query = "SELECT * FROM (SELECT * FROM s1 UNION SELECT * FROM s2) AS U WHERE U.ID = ?"
+                var query = "SELECT * FROM (SELECT ID, Title, Ingestiondate, Mode, Orbitdirection, Relativeorbitnumber, Satellite, Size FROM s1 UNION SELECT ID, Title, Ingestiondate, Mode, Orbitdirection, Relativeorbitnumber, Satellite, Size FROM s2) AS U WHERE U.ID = ?"
                 var resultsJSON = [];
                 var resultsString = [];
 

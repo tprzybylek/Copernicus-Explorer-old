@@ -9,7 +9,9 @@ from osgeo import ogr, osr
 
 startTime = time.time()
 
-order = '{"token":"6b8jld9y","orderedTime":1507033205159,"completedTime":1507033205,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"ca49f1ba-cd24-43d3-b6ae-5ed5ae5f7b8b","title":"S2A_OPER_PRD_MSIL1C_PDMC_20160828T210754_R022_V20160827T101022_20160827T101025","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
+#order = '{"token":"p1uc5bcn","orderedTime":1508412083239,"completedTime":1508412083,"extent":{"minX":16.592376683838665,"maxX":16.76403806079179,"minY":50.39132745387828,"maxY":50.51199652418108},"cart":[{"ID":"9376c3f7-54bc-45a3-b879-c0b26f9875ae","title":"S2A_MSIL2A_20170928T100021_N0205_R122_T33UXR_20170928T100617","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
+
+#order = '{"token":"6b8jld9y","orderedTime":1507033205159,"completedTime":1507033205,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"ca49f1ba-cd24-43d3-b6ae-5ed5ae5f7b8b","title":"S2A_OPER_PRD_MSIL1C_PDMC_20160828T210754_R022_V20160827T101022_20160827T101025","satellite":"S2A"}],"email":"example@example.com","status":"0"}'
 #order = '{"token":"6ewqnu0r","orderedTime":1506515962901,"completedTime":1506515963,"extent":{"minX":13.893173192627728,"maxX":14.189804052002726,"minY":50.897717175804516,"maxY":50.996352918763},"cart":[{"ID":"8b61bae7-d96d-4d7d-9d83-a653e2913ea4","title":"S1B_IW_GRDH_1SDV_20170102T165051_20170102T165116_003672_0064CF_5582","satellite":"S1B"}],"email":"example@example.com","status":"0"}'
 
 extractPath = 'D:\\test\\downloaded\\'
@@ -31,7 +33,7 @@ def isDownloaded (title):
 def downloadProduct (order, cartElement):
     url = "https://scihub.copernicus.eu/dhus/odata/v1/Products('" + cartElement['ID'] + "')/$value"                 #URL zobrazowania na serwerze ESA
 
-    downloadPath = 'D:\\test\\downloaded\\' + cartElement['title'] + '.zip'                                         #Sciezka pobranego obrazu                                                                        #Folder w ktorym rozpakowywany jest pobrany obraz
+    downloadPath = extractPath + cartElement['title'] + '.zip'                                         #Sciezka pobranego obrazu                                                                        #Folder w ktorym rozpakowywany jest pobrany obraz
 
     username = 'tprzybylek'
     password = 'pracainz2015'
@@ -54,8 +56,8 @@ def unzipProduct(title):
     printMessage('Product extracted', startTime)
 
 def zipOrder(token):
-    folderPath = 'D:\\test\\orders\\' + token + '\\'
-    outputPath = 'D:\\test\\orders\\' + token + '.zip'
+    folderPath = ordersPath + token + '\\'
+    outputPath = ordersPath + token + '.zip'
 
     parentFolder = os.path.dirname(folderPath)
 
@@ -235,7 +237,8 @@ def clipImages(token, extent, title, satellite):
             dst_ds.SetProjection(UTM_projection)
             dst_ds.SetGeoTransform(new_transform)
 
-            dst_ds.GetRasterBand(1).WriteArray(data)
+            if data.ndim <3:
+                dst_ds.GetRasterBand(1).WriteArray(data)
     
             dst_ds = None
             dataset_middle = None
@@ -263,15 +266,33 @@ def clipImages(token, extent, title, satellite):
         printMessage('Clipping image', startTime)
 
         subfolder = os.listdir(extractPath + title + '.SAFE\\GRANULE\\')
+        print title[4:10]
+        if title[4:10] == 'MSIL2A':
+            for sub in subfolder:
 
-        for sub in subfolder:
-            if not os.path.exists(ordersPath + token + '\\' + title + '\\' + sub):
-                os.makedirs(ordersPath + token + '\\' + title + '\\' + sub)
-            for image in os.listdir(extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\'):
-                if image.endswith('.jp2'):
-                    sourceImagePath = extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\' + image
-                    outputImagePath = ordersPath + token + '\\' + title + '\\' + sub + '\\' + image[:-4] + '.tiff'
-                    clipImageJP2(extent, sourceImagePath, outputImagePath)
+                subsubfolder = os.listdir(extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\')
+                print subsubfolder
+
+                for subsub in subsubfolder:
+                    if not os.path.exists(ordersPath + token + '\\' + title + '\\' + sub + '\\' + subsub):
+                        os.makedirs(ordersPath + token + '\\' + title + '\\' + sub + '\\' + subsub)
+                        print ordersPath + token + '\\' + title + '\\' + sub + '\\' + subsub
+
+
+                    for image in os.listdir(extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\' + subsub + '\\'):
+                        if image.endswith('.jp2'):
+                            sourceImagePath = extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\' + subsub + '\\' + image
+                            outputImagePath = ordersPath + token + '\\' + title + '\\' + sub + '\\' + subsub + '\\' + image[:-4] + '.tiff'
+                            clipImageJP2(extent, sourceImagePath, outputImagePath)
+        else:
+            for sub in subfolder:
+                if not os.path.exists(ordersPath + token + '\\' + title + '\\' + sub):
+                    os.makedirs(ordersPath + token + '\\' + title + '\\' + sub)
+                for image in os.listdir(extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\'):
+                    if image.endswith('.jp2'):
+                        sourceImagePath = extractPath + title + '.SAFE\\GRANULE\\' + sub + '\\IMG_DATA\\' + image
+                        outputImagePath = ordersPath + token + '\\' + title + '\\' + sub + '\\' + image[:-4] + '.tiff'
+                        clipImageJP2(extent, sourceImagePath, outputImagePath)
 
     else:
         printMessage('Sattelite not supported', startTime)
@@ -290,32 +311,32 @@ def main (order):
             printMessage('Is not downloaded', startTime)
             downloadProduct(j, product)
 
-    #    unzipProduct(product['title'])
+        unzipProduct(product['title'])
 
         clipImages(j['token'], j['extent'], product['title'], product['satellite'])
 
-    #zipOrder(j['token'])
+    zipOrder(j['token'])
 
-    #j['status']='1'
-    #j['completedTime']=time.time()
-    #ordersFilePath = 'C:\\Users\\20274\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\Imagery-Explorer\\Imagery-Explorer\\public\\orders.json'
-    #with open(ordersFilePath, 'r+') as f:
-    #    fJ = json.load(f)
-    #    for n, i in enumerate(fJ):
-    #        if i['token'] == j['token']:
-    #           fJ[n] = j
-    #    f.close()
+    j['status']='1'
+    j['completedTime']=time.time()
+    ordersFilePath = 'C:\\Users\\20274\\OneDrive\\Dokumenty\\Visual Studio 2017\\Projects\\Imagery-Explorer\\Imagery-Explorer\\public\\orders.json'
+    with open(ordersFilePath, 'r+') as f:
+        fJ = json.load(f)
+        for n, i in enumerate(fJ):
+            if i['token'] == j['token']:
+               fJ[n] = j
+        f.close()
 
-    #with open(ordersFilePath, 'w') as f:
-    #    json.dump(fJ, f)
-    #    f.close()
+    with open(ordersFilePath, 'w') as f:
+        json.dump(fJ, f)
+        f.close()
 
-    #printMessage('Deleting temporary files', startTime)
+    ###printMessage('Deleting temporary files', startTime)
 
-    #for product in j['cart']:
-    #    shutil.rmtree(extractPath + product['title'] + '.SAFE')
+    ###for product in j['cart']:
+    ###    shutil.rmtree(extractPath + product['title'] + '.SAFE')
 
-    #shutil.rmtree(ordersPath + j['token'])
+    ###shutil.rmtree(ordersPath + j['token'])
 
 
     print '------------------------------------------'
@@ -325,6 +346,6 @@ def main (order):
 ############################
 
 if __name__ == "__main__":
-    #main(sys.argv[1])
-    main(order)
+    main(sys.argv[1])
+    #main(order)
 ###

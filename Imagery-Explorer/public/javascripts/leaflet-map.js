@@ -1,5 +1,6 @@
 ﻿function toWKT(layer) {
     var lng, lat, coords = [];
+
     if (layer instanceof L.Polygon || layer instanceof L.Polyline) {
         var latlngs = layer.getLatLngs();
         for (var i = 0; i < latlngs.length; i++) {
@@ -18,7 +19,26 @@
     } else if (layer instanceof L.Marker) {
         return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
     }
-}
+};
+
+function toJSON(layer) {
+    var lngs = [];
+    var lats = [];
+    var coordinates = {};
+
+    var latlngs = layer.getLatLngs();
+    for (var i = 0; i < latlngs.length; i++) {
+        lngs.push(latlngs[i].lng);
+        lats.push(latlngs[i].lat);
+    };
+
+    coordinates['minX'] = Math.min(...lngs);
+    coordinates['maxX'] = Math.max(...lngs);
+    coordinates['minY'] = Math.min(...lats);
+    coordinates['maxY'] = Math.max(...lats);
+
+    return coordinates;
+};
 
 var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -65,6 +85,12 @@ map.on("draw:created", function (e) {
     drawControlEditOnly.addTo(map)
     drawnItems.addLayer(layer);
     document.getElementById('extent_form').value = toWKT(layer);
+
+    document.getElementById('minX').value = toJSON(layer)['minX'];
+    document.getElementById('maxX').value = toJSON(layer)['maxX'];
+    document.getElementById('minY').value = toJSON(layer)['minY'];
+    document.getElementById('maxY').value = toJSON(layer)['maxY'];
+
 });
 
 map.on("draw:deleted", function (e) {
