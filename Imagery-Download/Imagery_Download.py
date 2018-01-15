@@ -6,8 +6,8 @@ import mysql.connector
 import time
 
 def getXML (url, username, password):
-        username = 'tprzybylek'
-        password = 'pracainz2015'
+        username = 'username'
+        password =  'password'
 
         r = requests.get(url, auth=(username, password))  
         e = xml.etree.ElementTree.fromstring(r.content)
