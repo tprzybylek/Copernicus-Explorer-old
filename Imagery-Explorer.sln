@@ -9,7 +9,7 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Imagery-Clip", "Imagery-Exp
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Imagery-Download", "Imagery-Download\Imagery-Download.pyproj", "{9D51286C-DF90-4569-8D65-8A4A394E744A}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Imagery-RollingStock", "Imagery-RollingStock\Imagery-RollingStock.pyproj", "{E97A67D5-AAD3-4EE5-B0FB-1E6DF8CCDF9B}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Imagery-RollingArchive", "Imagery-RollingStock\Imagery-RollingArchive.pyproj", "{E97A67D5-AAD3-4EE5-B0FB-1E6DF8CCDF9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

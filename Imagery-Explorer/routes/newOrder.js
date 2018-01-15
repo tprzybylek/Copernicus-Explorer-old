@@ -9,7 +9,7 @@ var path = require('path');
 router.post('/', function (req, res) {
     var PythonShell = require('python-shell');
     
-    var myPythonScript = "Imagery_Clip_test.py"; //!!!
+    var myPythonScript = "Imagery_Clip.py"; //!!!
     var pythonExecutable = "C:\\Python27\\python.exe";
 
     

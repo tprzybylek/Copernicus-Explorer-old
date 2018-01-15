@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>9d51286c-df90-4569-8d65-8a4a394e744a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Imagery_Download_Old.py</StartupFile>
+    <StartupFile>Imagery_Download.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Imagery_Download_Old.py" />
     <Compile Include="Imagery_Download.py" />
   </ItemGroup>
   <ItemGroup>
