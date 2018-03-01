@@ -22,6 +22,8 @@ def getLastUpdate ():
     log = f.readlines()
     lastLine = log[-1]
 
+    print "Got last product time:", lastLine[:23]
+
     lastUpdateTime = datetime.strptime(lastLine[:23], '%Y-%m-%d %H:%M:%S.%f')
     lastUpdateStatus = lastLine[-3:]
     lastUpdateTimeDifference = datetime.now() - lastUpdateTime
@@ -35,6 +37,7 @@ def writeUpdateTime (status):
     last_product_time = last_product_time + timedelta(milliseconds = 1)
     f.write(last_product_time.__format__('%Y-%m-%d %H:%M:%S.%f') + ' ' + status + '\n')
     f.close()
+    print "Writing last product time:", last_product_time.__format__('%Y-%m-%d %H:%M:%S.%f')
 
 def WKT_to_GeoJSON (wkt):
     #UNUSED
@@ -142,9 +145,8 @@ lastUpdate = getLastUpdate()
 while lastUpdate['lastUpdateTimeDifference'] > 3600*6:
 
         queryURI = 'https://scihub.copernicus.eu/apihub/search?q=ingestiondate:[' + lastUpdate['lastUpdateTime'].isoformat() + 'Z%20TO%20NOW]%20AND%20footprint:%22Intersects(POLYGON((14.17%2054.14,18.19%2055.00,23.69%2054.35,24.26%2050.50,23.00%20 49.00,19.00%20 49.18,14.68%2050.73,14.02%2052.84,14.17%2054.14)))%22&orderby=ingestiondate%20asc&rows=100'
-        #queryURI = 'https://scihub.copernicus.eu/apihub/search?q=ingestiondate:[' + lastUpdate['lastUpdateTime'].isoformat() + 'Z%20TO%20NOW]%20AND%20footprint:%22Intersects(POLYGON((14.05%2054.89,24.23%2054.89,24.23%2048.95,14.05%2048.95,14.05%2048.95,14.05%2054.89)))%22&orderby=ingestiondate%20asc&rows=100'
 
-        print queryURI
+        print 'Query URI:', queryURI
 
         xmldoc = getXML(queryURI, 'tprzybylek', 'pracainz2015')
     
@@ -171,13 +173,22 @@ while lastUpdate['lastUpdateTimeDifference'] > 3600*6:
 
             feature['properties'] = product
 
-            print BuildQuery(feature['properties']['satellite'])
+            print 'satellite:', product['satellite']
+            print 'id:', product['id']
+            print 'ingestiondate:', product['ingestiondate']
+            print '--------------------------------'
+
             cursor.execute(BuildQuery(feature['properties']['satellite']))
         
         cnx.commit()
-        writeUpdateTime('200')
         cursor.close()
         cnx.close()
+        writeUpdateTime('200')
+        print 'DB update successful'
+        print 'Waiting 15 secs'
+        print "#### #### #### #### #### #### #### #### #### #### #### #### #### #### #### ####"
         time.sleep(15)
+
+        lastUpdate = getLastUpdate()
 else:
-    print('Wait')
+    print "DB update complete"
